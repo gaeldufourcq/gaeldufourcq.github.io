@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function isOwner() { return signedIn() && request.auth.uid == '__A_REMPLACER__'; }
+    function isOwner() { return signedIn() && request.auth.uid == 'msUHUjLvrdWwpU78j3Gwj1yNoxy1'; }
     function isMe(uid) { return signedIn() && request.auth.uid == uid; }
 
     // Progression de chacun : privée
