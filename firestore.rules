@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner() { return signedIn() && request.auth.uid == '__A_REMPLACER__'; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // Progression de chacun : privée
+    match /data/users/{uid}/{doc} {
+      allow read, write: if isMe(uid);
+    }
+    // Classement : tout le monde lit, chacun n'écrit que sa ligne
+    match /board/{uid} {
+      allow read: if true;
+      allow create, update: if isMe(uid)
+        && request.resource.data.keys().hasOnly(['pseudo','sues','serie','at'])
+        && request.resource.data.pseudo is string && request.resource.data.pseudo.size() <= 20
+        && request.resource.data.sues is int && request.resource.data.serie is int;
+      allow delete: if isMe(uid) || isOwner();
+    }
+    // Cartes validées : tout le monde lit, seul Gaël écrit
+    match /cards/{id} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+    // Propositions : chacun écrit les siennes, seul Gaël les lit toutes
+    match /proposals/{uid} {
+      allow read, write: if isMe(uid) || isOwner();
+    }
+    // Présence en direct (en ligne, duels)
+    match /rooms/{room}/peers/{uid} {
+      allow read: if signedIn();
+      allow write: if isMe(uid);
+    }
+  }
+}
