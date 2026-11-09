@@ -27,6 +27,15 @@ service cloud.firestore {
     match /proposals/{uid} {
       allow read, write: if isMe(uid) || isOwner();
     }
+    // Pièges de la classe : liste anonyme des cartes « à revoir » de chacun
+    match /traps/{uid} {
+      allow read: if true;
+      allow create, update: if isMe(uid)
+        && request.resource.data.keys().hasOnly(['ko','at'])
+        && request.resource.data.ko is list && request.resource.data.ko.size() <= 300
+        && request.resource.data.at is int;
+      allow delete: if isMe(uid);
+    }
     // Présence en direct (en ligne, duels)
     match /rooms/{room}/peers/{uid} {
       allow read: if signedIn();

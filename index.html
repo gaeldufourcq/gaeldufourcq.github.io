@@ -591,6 +591,59 @@ html.th-grad #v-home header.top .sel,html.th-grad #v-home header.top .linkbtn{ba
 select option,select optgroup{background-color:var(--surface);color:var(--ink)}
 html.th-grad select{color-scheme:dark}
 html.th-grad select option{background-color:#141938;color:#EEF0FF}
+
+/* ---------- calendrier annuel ---------- */
+.heatwrap{overflow-x:auto;padding-bottom:4px}
+.heat{width:100%;min-width:720px;height:auto;display:block}
+.hm-t{font:600 9px var(--f-mono);fill:var(--muted)}
+.hm.l0{fill:var(--line);opacity:.55}.hm.l1{fill:#9be9a8}.hm.l2{fill:#40c463}.hm.l3{fill:#30a14e}.hm.l4{fill:#216e39}
+html.th-grad .hm.l1{fill:#3b2f86}html.th-grad .hm.l2{fill:#5b3fd1}html.th-grad .hm.l3{fill:#a34ba0}html.th-grad .hm.l4{fill:#e4572e}
+html.th-sobre .hm.l1{fill:#4a4234}html.th-sobre .hm.l2{fill:#7a6849}html.th-sobre .hm.l3{fill:#a88d5c}html.th-sobre .hm.l4{fill:#c8a56a}
+.hm-foot{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--muted);align-items:center}
+.hm-foot b,.stat .hm-foot b{color:var(--ink);font:700 14px var(--f-body);display:inline;margin:0}
+.hm-leg{margin-left:auto;display:inline-flex;align-items:center;gap:3px}
+.hm-leg i{display:inline-block;width:11px;height:11px;border-radius:3px;background:var(--line)}
+.hm-leg i.l1{background:#9be9a8}.hm-leg i.l2{background:#40c463}.hm-leg i.l3{background:#30a14e}.hm-leg i.l4{background:#216e39}
+html.th-grad .hm-leg i.l1{background:#3b2f86}html.th-grad .hm-leg i.l2{background:#5b3fd1}html.th-grad .hm-leg i.l3{background:#a34ba0}html.th-grad .hm-leg i.l4{background:#e4572e}
+html.th-sobre .hm-leg i.l1{background:#4a4234}html.th-sobre .hm-leg i.l2{background:#7a6849}html.th-sobre .hm-leg i.l3{background:#a88d5c}html.th-sobre .hm-leg i.l4{background:#c8a56a}
+/* ---------- pièges ---------- */
+.traps{list-style:none;padding:0;margin:4px 0 0;display:flex;flex-direction:column;gap:6px}
+.traps li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.traps a{flex:1;color:var(--ink);text-decoration:none;font-size:14.5px;line-height:1.35}.traps a:hover{text-decoration:underline}
+.traps .code{font:600 12px var(--f-mono);margin-right:6px}
+.tr-n{font:800 15px var(--f-mono);color:var(--muted);width:22px}.tr-k{font:600 13px var(--f-mono);color:var(--ko);white-space:nowrap}
+/* ---------- mode focus ---------- */
+.fw{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:999px;background:var(--ink);color:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.3);animation:gsin .2s ease-out}
+html.th-grad .fw{background:linear-gradient(135deg,#1d2b64,#5b3fd1 60%,#e4572e);color:#fff}
+.fw.pause{background:#1e9e6a;color:#fff}
+.fw-ring{width:40px;height:40px;transform:rotate(-90deg)}
+.fw-ring circle{fill:none;stroke-width:3.5}.fw-ring .bg{stroke:currentColor;opacity:.2}.fw-ring .fg{stroke:currentColor;stroke-linecap:round;transition:stroke-dasharray 1s linear}
+.fw-txt{display:flex;flex-direction:column;line-height:1.15}.fw-txt b{font:800 18px var(--f-mono)}.fw-txt span{font-size:12px;opacity:.85}
+.fw-x{background:transparent;border:none;color:inherit;opacity:.7;cursor:pointer;font-size:14px;padding:4px}
+html.focusing .courses,html.focusing #v-home .htabs,html.focusing .hfeat,html.focusing #foot,html.focusing #rs{opacity:.25;transition:opacity .4s}
+html.focusing .courses:hover,html.focusing #v-home .htabs:hover{opacity:1}
+/* ---------- toast et confettis ---------- */
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:120;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.3);animation:tin .35s ease-out;max-width:calc(100% - 32px);text-align:center}
+.toast.big{font-size:17px;padding:14px 22px}
+html.th-grad .toast{background:linear-gradient(135deg,#5b3fd1,#e4572e);color:#fff}
+@keyframes tin{from{transform:translate(-50%,-20px);opacity:0}}
+.confetti{position:fixed;left:50%;top:40%;z-index:119;pointer-events:none}
+.confetti i{position:absolute;border-radius:2px;animation:cboom 2.2s cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes cboom{0%{transform:translate(0,0) rotate(0);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),calc(var(--dy) + 520px)) rotate(var(--r));opacity:0}}
+/* ---------- image du bilan ---------- */
+.bexport{position:fixed;left:-9999px;top:0;width:540px;height:960px;box-sizing:border-box;padding:56px 48px;color:#fff;font-family:var(--f-body);background:linear-gradient(150deg,#1d2b64 0%,#5b3fd1 55%,#e4572e 100%);display:flex;flex-direction:column;gap:18px}
+.bx-top{font:700 16px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.bx-who{font:800 52px/1 var(--f-display)}
+.bx-big{font:800 150px/1 var(--f-display);letter-spacing:-.04em;display:flex;flex-direction:column}
+.bx-big span{font:600 22px var(--f-body);letter-spacing:0;opacity:.9;margin-top:6px}
+.bx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bx-grid div{background:rgba(255,255,255,.15);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column}
+.bx-grid b{font:800 36px var(--f-display)}.bx-grid span{font-size:15px;opacity:.85}
+.bx-line{font-size:20px}.bx-line b{font-family:var(--f-mono)}
+.bx-bars{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.bx-bars div{display:grid;grid-template-columns:70px 1fr 60px;gap:10px;align-items:center;font:700 16px var(--f-mono)}
+.bx-bars i{height:12px;border-radius:6px;background:rgba(255,255,255,.25);overflow:hidden;display:block}.bx-bars u{display:block;height:100%;background:#fff;border-radius:6px}
+.bx-foot{font:600 15px var(--f-mono);opacity:.8;text-align:center}
 .sqlnav .chip.ok{border-color:var(--ok);color:var(--ok)}
 .tschema{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:4px;font-size:14.5px}
 .tschema li{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
@@ -841,7 +894,7 @@ function recordCalc(gid, ok){ const s=calcStats[gid]||{ok:0,n:0}; s.n++; if(ok) 
 function setStatus(id, v){
   status[id]=v; const s=srs[id]||{b:0};
   s.b = v==='ok' ? Math.min((s.b||0)+1,5) : 0; s.due=dstr(IV[s.b]); srs[id]=s;
-  ts[id]=Date.now(); logReview(v==='ok'); logCourse(courseOfId(id)); saveAll(); renderProgress();
+  ts[id]=Date.now(); logReview(v==='ok'); logCourse(courseOfId(id)); saveAll(); renderProgress(); celebrateAfter(id,v); queueTraps();
 }
 const isDue = q => !srs[q.id] || srs[q.id].due<=dstr();
 const isNew = q => !status[q.id];
@@ -1036,9 +1089,12 @@ function renderHome(){
       <h2 class="hh">Mes matières</h2>
       <div class="hgrid">${tiles}</div>`,
     revision:`<div class="stats">${express}
+      <div class="stat wide xgo fgo"><div><span class="lbl">Mode focus</span><span class="info">${focusState()?'Session en cours : le minuteur est en bas à gauche.':'25 minutes de révision sans distraction, puis 5 minutes de pause. Un compte rendu à la fin.'}</span></div><button class="btn primary" id="focus-go">${focusState()?'Arrêter la session':'Démarrer 25 min'}</button></div>
       <div class="stat wide xgo"><div><span class="lbl">Avant de dormir</span><span class="info">Les 5 cartes ratées aujourd’hui, à revoir juste avant de te coucher.</span></div><a class="btn ghost" href="#soir">Lancer</a></div>
       ${serie}${due}
+      ${heatmapHTML()}
       <div class="stat"><span class="lbl">Cartes révisées, 14 derniers jours</span>${activityChart()}</div>
+      ${trapsHTML()}
       <div class="stat"><span class="lbl">Points faibles</span>
         ${weak.length?`<ul class="weak">${weak.map(w=>`<li><a href="#${w.c.id}-cartes" class="weakgo" data-c="${w.c.id}" data-sec="${esc(w.s+'|'+w.sec)}"><span class="code">${esc(w.c.code)} · ${esc((w.c.groups.find(g=>g.n===w.s)||{}).short||w.c.groupShort+w.s)}</span> ${esc(w.sec)}</a><span class="stamp ko">${w.n} à revoir</span></li>`).join('')}</ul>`:'<span class="info">Rien à signaler : aucune carte marquée « à revoir ».</span>'}</div>
       ${planHTML()}
@@ -1059,7 +1115,8 @@ function renderHome(){
   $('#v-home').querySelectorAll('.hrev').forEach(b=>b.onclick=()=>goCourse(b.dataset.c,{mode:'exam'}));
   $('#v-home').querySelectorAll('.duego').forEach(a=>a.onclick=e=>{ e.preventDefault(); goCourse(a.dataset.c,{mode:'srs',sec:''}); });
   $('#v-home').querySelectorAll('.weakgo').forEach(a=>a.onclick=e=>{ e.preventDefault(); goCourse(a.dataset.c,{mode:'ko',sec:a.dataset.sec}); });
-  bindInstall(); const hs=$('#hf-search'); if(hs) hs.onclick=openSearch;
+  bindInstall(); const hs=$('#hf-search'); if(hs) hs.onclick=openSearch; bindTraps();
+  const fg=$('#focus-go'); if(fg) fg.onclick=()=>{ if(focusState()) stopFocus(true); else startFocus(); renderHome(); };
   $('#v-home').querySelectorAll('.htile').forEach(a=>a.onclick=e=>{ e.preventDefault(); goCourse(a.getAttribute('href').slice(1).split('-')[0]); });
 }
 function showHome(){
@@ -1797,7 +1854,7 @@ function bilanSlides(d){
   S.push({bg:'linear-gradient(140deg,#1d2b64,#5b3fd1 60%,#e4572e)', end:true, h:`<div class="bcard"><span class="bref">Révisions BUT1 · ma semaine</span><b class="bwho">${esc(pseudo()||'Moi')}</b>
     <div class="bgrid"><div><b>${d.n}</b><span>révisions</span></div><div><b>${d.rate} %</b><span>réussies</span></div><div><b>${d.active}/7</b><span>jours actifs</span></div><div><b>${d.streak}</b><span>jours de série</span></div></div>
     ${d.top&&d.top.c?`<p>Matière de la semaine : <b>${esc(d.top.c.code)}</b></p>`:''}${d.moment?`<p>${esc(d.moment[1])}</p>`:''}<span class="bref">${esc(location.host)}</span></div>
-    <div class="row" style="justify-content:center"><button class="btn" id="b-again">Revoir</button><a class="btn ghost bl" href="#accueil">Accueil</a></div><p class="bs">Fais une capture d’écran pour la partager 📸</p>`});
+    <div class="row" style="justify-content:center"><button class="btn" id="b-img">📸 Télécharger l’image</button><button class="btn ghost bl" id="b-again">Revoir</button><a class="btn ghost bl" href="#accueil">Accueil</a></div><p class="bs">Une belle image à poster en story ou à envoyer aux potes.</p>`});
   return S;
 }
 function renderBilan(){
@@ -1809,7 +1866,7 @@ function renderBilan(){
   const nx=el.querySelector('.bnext'), pv=el.querySelector('.bprev');
   if(nx) nx.onclick=()=>{ bil.i=Math.min(bil.i+1,S.length-1); renderBilan(); };
   if(pv) pv.onclick=()=>{ bil.i=Math.max(bil.i-1,0); renderBilan(); };
-  const ag=$('#b-again'); if(ag) ag.onclick=()=>{ bil.i=0; renderBilan(); };
+  const ag=$('#b-again'); if(ag) ag.onclick=()=>{ bil.i=0; renderBilan(); }; const bi=$('#b-img'); if(bi) bi.onclick=()=>exportBilan(bi);
   if(!s.end) bilTimer=setTimeout(()=>{ if(!$('#v-bilan').hidden && bil){ bil.i++; renderBilan(); } }, 5500);
 }
 addEventListener('keydown', e=>{ if($('#v-bilan').hidden || !bil) return; if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); $('#v-bilan .bnext')?.click(); } if(e.key==='ArrowLeft') $('#v-bilan .bprev')?.click(); if(e.key==='Escape') location.hash='accueil'; });
@@ -1900,6 +1957,139 @@ function bindInstall(){
   };
 }
 if('serviceWorker' in navigator && location.protocol==='https:') addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+/* ================= EXTRAS 2 : calendrier annuel, pièges de la classe, mode focus, bilan en image, célébrations ================= */
+
+/* ---------- calendrier de révision façon GitHub ---------- */
+function heatmapHTML(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const start=new Date(today); start.setDate(start.getDate()-7*52 - ((today.getDay()+6)%7));   // un lundi, il y a 52 semaines
+  const cells=[], months=[]; let max=1, total=0, days=0, best={n:0};
+  for(let d=new Date(start), i=0; d<=today; d.setDate(d.getDate()+1), i++){
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const n=(dlog[k]&&dlog[k].n)||0; max=Math.max(max,n); total+=n; if(n) days++; if(n>best.n) best={n,k};
+    const w=Math.floor(i/7), r=i%7; cells.push({k,n,w,r,d:new Date(d)});
+    if(d.getDate()===1) months.push({w, m:d.toLocaleDateString('fr-FR',{month:'short'}).replace('.','')});
+  }
+  const lvl=n=> n===0?0 : n<=max*.25?1 : n<=max*.5?2 : n<=max*.75?3 : 4;
+  const W=Math.max(...cells.map(c=>c.w))+1, S=13, G=3, L=26, T=18;
+  const svg=`<svg class="heat" viewBox="0 0 ${L+W*(S+G)} ${T+7*(S+G)}" role="img" aria-label="Révisions jour par jour sur un an">
+    ${months.map(m=>`<text x="${L+m.w*(S+G)}" y="11" class="hm-t">${esc(m.m)}</text>`).join('')}
+    ${['L','','M','','V','',''].map((t,r)=>t?`<text x="0" y="${T+r*(S+G)+10}" class="hm-t">${t}</text>`:'').join('')}
+    ${cells.map(c=>`<rect x="${L+c.w*(S+G)}" y="${T+c.r*(S+G)}" width="${S}" height="${S}" rx="3" class="hm l${lvl(c.n)}"><title>${c.d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})} : ${c.n} révision${c.n>1?'s':''}</title></rect>`).join('')}
+  </svg>`;
+  const bs=Math.max(streak(), store.get('best-streak',0));
+  return `<div class="stat wide"><span class="lbl">Mon année de révision</span><div class="heatwrap">${svg}</div>
+    <div class="hm-foot"><span><b>${n(total)}</b> révisions</span><span><b>${days}</b> jours actifs</span><span>Record de série : <b>${bs} jour${bs>1?'s':''}</b></span>${best.n?`<span>Meilleur jour : <b>${best.n}</b> (${new Date(best.k+'T00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})})</span>`:''}
+    <span class="hm-leg">Moins <i class="hm l0"></i><i class="hm l1"></i><i class="hm l2"></i><i class="hm l3"></i><i class="hm l4"></i> Plus</span></div></div>`;
+}
+
+/* ---------- les pièges de la classe ---------- */
+let traps={docs:[], sub:false, last:null};
+function pushTraps(){
+  if(!social.db || !social.uid || !social.canWrite) return;
+  const ko=Object.keys(status).filter(id=>status[id]==='ko').sort().slice(0,300);
+  const sig=ko.join(','); if(sig===traps.last) return;
+  traps.last=sig; social.db.doc('traps/'+social.uid).set({ko, at:Date.now()}).catch(()=>{ traps.last=null; });
+}
+let trapTimer=null; function queueTraps(){ clearTimeout(trapTimer); trapTimer=setTimeout(pushTraps, 3000); }
+function watchTraps(){
+  if(traps.sub || !social.db) return; traps.sub=true;
+  social.db.collection('traps').onSnapshot(s=>{ traps.docs=s.docs.map(d=>({id:d.id,...d.data()})).filter(d=>Date.now()-(d.at||0)<45*864e5); if(!$('#v-home').hidden && store.get('home-tab','apercu')==='revision'){ const el=$('#traps'); if(el) el.outerHTML=trapsHTML(); bindTraps(); } }, ()=>{});
+}
+function trapList(){
+  const cnt={}; for(const d of traps.docs) for(const id of (d.ko||[])) cnt[id]=(cnt[id]||0)+1;
+  const all=new Map(); COURSES.forEach(c=>c.qa.forEach(q=>all.set(q.id,{c,q})));
+  return Object.entries(cnt).filter(([id])=>all.has(id)).map(([id,n])=>({...all.get(id), n})).sort((a,b)=>b.n-a.n || a.c.code.localeCompare(b.c.code)).slice(0,10);
+}
+function trapsHTML(){
+  if(social.db) watchTraps();
+  const t=trapList(), people=traps.docs.length;
+  return `<div class="stat wide" id="traps"><span class="lbl">Les pièges de la classe</span>
+    <span class="info">Les cartes que le plus de monde a marquées « à revoir »${people?` (${people} personne${people>1?'s':''} sur le site)`:''}. Ta liste est partagée sans ton pseudo.</span>
+    ${t.length?`<ol class="traps">${t.map((x,i)=>`<li><span class="tr-n">${i+1}</span><a href="#" class="trapgo" data-c="${x.c.id}" data-id="${esc(x.q.id)}"><span class="code" style="color:${x.c.color||'var(--accent)'}">${esc(x.c.code)}</span> ${esc(x.q.q)}</a><span class="tr-k">${x.n} 😬</span></li>`).join('')}</ol>`
+      : `<p class="hint">${social.db?'Pas encore assez de réponses. Plus il y aura de monde sur le site, plus la liste sera utile.':'Disponible quand tu es connecté au site.'}</p>`}</div>`;
+}
+function bindTraps(){ document.querySelectorAll('.trapgo').forEach(a=>a.onclick=e=>{ e.preventDefault(); const c=COURSES.find(x=>x.id===a.dataset.c); const q=c&&c.qa.find(x=>x.id===a.dataset.id); if(q) goList(c,q); }); }
+
+/* ---------- mode focus (Pomodoro) ---------- */
+const baseTitle=document.title;
+let focusT=null;
+const FOCUS={work:25, pause:5};
+function focusState(){ return store.get('focus',null); }
+function startFocus(){ store.set('focus',{phase:'work', end:Date.now()+FOCUS.work*60000, n0:totalReviews(), start:Date.now()}); document.documentElement.classList.add('focusing'); tickFocus(); }
+function stopFocus(summary){ const f=focusState(); store.set('focus',null); document.documentElement.classList.remove('focusing'); clearInterval(focusT); const w=$('#focusw'); if(w) w.remove(); document.title=baseTitle;
+  if(summary && f){ const n=totalReviews()-f.n0, min=Math.round((Date.now()-f.start)/60000); toast(`Session terminée : ${n} révision${n>1?'s':''} en ${min} min. Bravo !`, true); } }
+function totalReviews(){ return Object.values(dlog).reduce((a,x)=>a+(x.n||0),0); }
+function beep(){ try{ const a=new (window.AudioContext||window.webkitAudioContext)(); [0,.25,.5].forEach((t,i)=>{ const o=a.createOscillator(), g=a.createGain(); o.frequency.value=[660,880,990][i]; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.18,a.currentTime+t); g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t+.22); o.start(a.currentTime+t); o.stop(a.currentTime+t+.24); }); }catch(e){} }
+function tickFocus(){
+  clearInterval(focusT); const f=focusState(); if(!f){ document.documentElement.classList.remove('focusing'); return; }
+  document.documentElement.classList.toggle('focusing', f.phase==='work');
+  let w=$('#focusw'); if(!w){ w=document.createElement('div'); w.id='focusw'; document.body.appendChild(w); }
+  const draw=()=>{ const f=focusState(); if(!f) return; const left=f.end-Date.now();
+    if(left<=0){ beep(); if(f.phase==='work'){ store.set('focus',{...f, phase:'pause', end:Date.now()+FOCUS.pause*60000}); toast(`25 minutes ! ${totalReviews()-f.n0} révisions. Pause de 5 minutes ☕`, true); } else { store.set('focus',{...f, phase:'work', end:Date.now()+FOCUS.work*60000}); toast('C’est reparti pour 25 minutes 💪'); } tickFocus(); return; }
+    const tot=(f.phase==='work'?FOCUS.work:FOCUS.pause)*60000, p=1-left/tot, m=Math.floor(left/60000), s=Math.floor(left%60000/1000);
+    w.className='fw '+f.phase;
+    w.innerHTML=`<svg viewBox="0 0 36 36" class="fw-ring"><circle cx="18" cy="18" r="15.5" class="bg"/><circle cx="18" cy="18" r="15.5" class="fg" style="stroke-dasharray:${(p*97.4).toFixed(1)} 97.4"/></svg>
+      <div class="fw-txt"><b>${m}:${String(s).padStart(2,'0')}</b><span>${f.phase==='work'?'Focus':'Pause'} · ${totalReviews()-f.n0} révision${totalReviews()-f.n0>1?'s':''}</span></div><button class="fw-x" title="Arrêter la session" aria-label="Arrêter la session">✕</button>`;
+    w.querySelector('.fw-x').onclick=()=>stopFocus(true);
+    document.title=`${m}:${String(s).padStart(2,'0')} · ${f.phase==='work'?'Focus':'Pause'}`; };
+  draw(); focusT=setInterval(draw,1000);
+}
+addEventListener('storage', e=>{ if(e.key==='r108:focus') tickFocus(); });
+
+/* ---------- petit message flottant ---------- */
+function toast(msg, big){
+  let t=$('#toast'); if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
+  t.className='toast'+(big?' big':''); t.textContent=msg; t.hidden=false; t.style.animation='none'; void t.offsetWidth; t.style.animation='';
+  clearTimeout(toast.t); toast.t=setTimeout(()=>{ t.hidden=true; }, big?6000:3500);
+}
+
+/* ---------- célébrations ---------- */
+function confettiBurst(){
+  const box=document.createElement('div'); box.className='confetti'; const cols=['#5b3fd1','#e4572e','#1e9e6a','#2d6bdb','#f2a541','#ff6fae'];
+  for(let i=0;i<120;i++){ const s=document.createElement('i'); const a=Math.random()*Math.PI*2, v=180+Math.random()*420;
+    s.style.cssText=`background:${cols[i%cols.length]};--dx:${Math.cos(a)*v}px;--dy:${Math.sin(a)*v-260}px;--r:${Math.random()*900-450}deg;animation-delay:${Math.random()*.15}s;width:${6+Math.random()*6}px;height:${8+Math.random()*8}px`; box.appendChild(s); }
+  document.body.appendChild(box); setTimeout(()=>box.remove(), 2600);
+}
+function celebrateAfter(id, v){
+  if(v!=='ok') return;
+  const c=COURSES.find(x=>x.id===courseOfId(id)); const q=c&&c.qa.find(x=>x.id===id); if(!c||!q) return;
+  const part=c.qa.filter(x=>x.s===q.s && !x.custom);
+  if(part.length>=3 && part.every(x=>status[x.id]==='ok')){
+    const k='done-'+c.id+'-'+q.s, seen=store.get('celebrated',{}); if(!seen[k]){ seen[k]=Date.now(); store.set('celebrated',seen);
+      confettiBurst(); toast(`🎉 ${c.code} · ${(c.groups.find(g=>g.n===q.s)||{}).short||'partie '+q.s} : tout est su !`, true); return; }
+  }
+  const st=streak(), best=store.get('best-streak',0);
+  if(st>best){ store.set('best-streak',st); if(best>0 && st>=2){ confettiBurst(); toast(`🔥 Nouveau record : ${st} jours de suite !`, true); } }
+}
+
+/* ---------- bilan : export en image ---------- */
+let h2cLoad=null;
+function loadH2C(){ if(window.html2canvas) return Promise.resolve(); if(h2cLoad) return h2cLoad;
+  h2cLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload=res; s.onerror=e=>{ h2cLoad=null; rej(e); }; document.head.appendChild(s); }); return h2cLoad; }
+async function exportBilan(btn){
+  const old=btn.textContent; btn.disabled=true; btn.textContent='Création de l’image…';
+  try{
+    await loadH2C(); const d=bil.d;
+    const card=document.createElement('div'); card.className='bexport';
+    card.innerHTML=`<div class="bx-top">Révisions BUT1 · ma semaine</div><div class="bx-who">${esc(pseudo()||'Moi')}</div>
+      <div class="bx-big">${d.n}<span>révisions cette semaine</span></div>
+      <div class="bx-grid"><div><b>${d.rate} %</b><span>réussies</span></div><div><b>${d.active}/7</b><span>jours actifs</span></div><div><b>${d.streak}</b><span>jours de série</span></div><div><b>${d.sues}</b><span>cartes sues</span></div></div>
+      ${d.top&&d.top.c?`<div class="bx-line">Matière de la semaine <b>${esc(d.top.c.code)}</b></div>`:''}${d.moment?`<div class="bx-line">${esc(d.moment[1])}</div>`:''}
+      <div class="bx-bars">${d.prog.map(x=>`<div><span>${esc(x.c.code)}</span><i><u style="width:${x.p}%"></u></i><b>${x.p} %</b></div>`).join('')}</div>
+      <div class="bx-foot">${esc(location.host)}</div>`;
+    document.body.appendChild(card);
+    const cv=await html2canvas(card,{backgroundColor:null, scale:2, logging:false}); card.remove();
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png')); const file=new File([blob],'mon-bilan-revisions.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]}) && /android|iphone|ipad/i.test(navigator.userAgent)){ await navigator.share({files:[file], title:'Mon bilan de révision'}).catch(()=>{}); }
+    else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mon-bilan-revisions.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
+    btn.textContent='Image prête ✔';
+  }catch(e){ btn.textContent='Impossible de créer l’image'; }
+  setTimeout(()=>{ btn.disabled=false; btn.textContent=old; },2500);
+}
+
+if(focusState()) setTimeout(tickFocus,0);
 
 const CG=()=>GENS.filter(g=>(g.c||'r108')===C.id);
 let curGen=GENS[0];
