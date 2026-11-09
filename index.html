@@ -474,6 +474,15 @@ code.bits{font:600 .95em var(--f-mono);letter-spacing:.04em;background:var(--tin
 .gs-hint{color:var(--muted);padding:14px;margin:0}
 .gs-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:54px;height:54px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:26px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .gs-fab:hover{transform:scale(1.06)}
+/* barre d'outils de l'accueil : trois contrôles identiques */
+#v-home header.top .row{gap:8px;align-items:center}
+#v-home header.top .grpsel{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--f-body);color:var(--muted)}
+#v-home header.top .sel,#v-home header.top .linkbtn,#v-home header.top .hbtn{height:38px;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;padding:0 14px;margin:0;font:600 14px/1 var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;text-decoration:none;cursor:pointer;box-shadow:none}
+#v-home header.top .sel{padding-right:30px}
+#v-home header.top .linkbtn:hover,#v-home header.top .hbtn:hover,#v-home header.top .sel:hover{border-color:var(--accent)}
+#v-home header.top .hbtn{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#v-home header.top .hbtn:hover{opacity:.9}
+#v-home header.top .hint{flex-basis:100%;margin:4px 0 0;text-align:right}
 body:has(#v-bilan:not([hidden])) .gs-fab,body:has(#gsearch:not([hidden])) .gs-fab{display:none}
 @media (max-width:700px){ #v-bilan .bstory{position:fixed;inset:0;border-radius:0;z-index:60;min-height:0;padding-top:env(safe-area-inset-top,0px)} }
 /* bilan */
@@ -1820,7 +1829,7 @@ function isStandalone(){ return matchMedia('(display-mode: standalone)').matches
 function installHTML(){
   if(isStandalone()) return '';
   const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  return `<button class="btn ghost" id="install-btn" ${installEvt||ios?'':'hidden'}>📲 Installer l’appli</button>`;
+  return `<button class="hbtn" id="install-btn" ${installEvt||ios?'':'hidden'}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Installer l’appli</button>`;
 }
 function bindInstall(){
   const b=$('#install-btn'); if(!b) return;
