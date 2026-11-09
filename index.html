@@ -2010,7 +2010,9 @@ function loadSql(){
   if(sqlReady) return sqlReady;
   sqlReady=new Promise((res,rej)=>{
     const s=document.createElement('script'); s.src=SQLJS+'sql-wasm.js';
-    s.onload=()=>initSqlJs({locateFile:f=>SQLJS+f}).then(res,rej); s.onerror=rej; document.head.appendChild(s);
+    const t=setTimeout(()=>rej(new Error('timeout')),15000);
+    const go=()=>initSqlJs({locateFile:f=>SQLJS+f}).then(x=>{clearTimeout(t);res(x);},e=>{clearTimeout(t);rej(e);});
+    if(window.initSqlJs) go(); else { s.onload=go; s.onerror=e=>{clearTimeout(t);rej(e);}; document.head.appendChild(s); }
   }).then(SQL=>{ sqlDb=new SQL.Database(); sqlDb.run(SQL_SCHEMA); return SQL; });
   sqlReady.catch(()=>{ sqlReady=null; });
   return sqlReady;
@@ -2054,7 +2056,7 @@ async function renderSql(){
   if(!sqlOrder.length) sqlOrder=ex.map((_,i)=>i);
   el.innerHTML='<p class="hint">Chargement du moteur SQL…</p>';
   try{ await loadSql(); }
-  catch(e){ el.innerHTML='<article class="sheet"><div class="empty">Le moteur SQL ne peut pas se charger ici. Ouvre le site revisions-but1.netlify.app pour faire ces exercices.</div></article>'; return; }
+  catch(e){ el.innerHTML='<article class="sheet"><div class="empty">Le moteur SQL n’a pas pu se charger (connexion lente, ou page ouverte dans Claude qui bloque ce téléchargement). Recharge la page, ou ouvre revisions-but1.netlify.app.</div></article>'; return; }
   const hasExam=ex.some(x=>x.lv);
   const run=store.get('sqlexam-cur-'+C.id,null);
   if(run && !run.done && sqlMode!=='exam') sqlMode='exam';
