@@ -438,6 +438,13 @@ table.sqlres th{background:var(--tint)}
 .sqlnav{display:flex;flex-wrap:wrap;gap:6px}
 .sqlnav .chip{min-width:36px;text-align:center;padding:4px 8px}
 .sqlnav .chip.ok{border-color:var(--ok);color:var(--ok)}
+.tschema{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:4px;font-size:14.5px}
+.tschema li{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
+.tbtn{font:600 13.5px var(--f-mono);background:var(--surface);border:1.5px solid var(--line);color:var(--ink);border-radius:6px;padding:3px 9px;cursor:pointer;margin-right:2px}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tdata .lbl{display:block;font:600 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.tdata .tbl{max-height:320px;overflow:auto}
 .sqlnav .navlbl{font:600 11px/26px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-right:6px}
 .exout{margin-top:8px}
 #sqlexam{display:flex;flex-direction:column;gap:12px}
@@ -2038,14 +2045,20 @@ const SQL_DBS={
   guide:{name:'Guide gastronomique (TD)', tables:['Restaurant','Vin','Plat','ProposerVin','ProposerPlat','Ouverture'],
     schema:'<li>Restaurant(<u>id</u>, nom, ville, dateEnregistrement)</li><li>Vin(<u>id</u>, cru, millesime, region, couleur)</li><li>Plat(<u>id</u>, nom, place, couleurVinRecommandee, #idVinIdeal)</li><li>ProposerVin(<u>#idRestaurant, #idVin</u>, prix)</li><li>ProposerPlat(<u>#idRestaurant, #idPlat</u>, prix, estSpecialite)</li><li>Ouverture(<u>#idRestaurant, jourSemaine, horaireOuverture</u>, horaireFermeture)</li>'}
 };
-function schemaHTML(db,open){
-  const d=SQL_DBS[db||'cours'];
-  return `<details class="schema"${open?' open':''}><summary>Schéma et données : ${esc(d.name)}</summary>
-    <ul>${d.schema}</ul>
-    <p class="hint">La base tourne sous SQLite dans ton navigateur : les dates s’écrivent '2026-09-01' (sous Oracle : TO_DATE('01/09/2026','DD/MM/YYYY')). « = ANY » et « != ALL » sont acceptés ; pour les autres ANY/ALL, utilise MIN, MAX ou EXISTS.</p>
-    <div class="sql-data" data-db="${db||'cours'}"></div></details>`;
+// Visionneuse : le schéma toujours visible + le contenu d'une table au choix
+function schemaHTML(db,open,first){
+  const d=SQL_DBS[db||'cours']; const t0=first&&d.tables.includes(first)?first:d.tables[0];
+  return `<section class="sheet tview" data-db="${db||'cours'}"><div class="sheet-head"><span>${esc(d.name)} · les tables</span><span>clique sur une table pour voir son contenu</span></div>
+    <div class="sheet-body">
+      <ul class="tschema">${d.tables.map(t=>{ const li=d.schema.match(new RegExp('<li>'+t+'\\(.*?</li>')); return `<li><button class="tbtn" data-t="${t}" aria-pressed="${t===t0}">${t}</button>${li?li[0].replace(/^<li>\w+/,'').replace('</li>',''):''}</li>`; }).join('')}</ul>
+      <div class="tdata" data-show="${t0}"></div>
+      <p class="hint" style="margin:8px 0 0">SQLite : les dates s’écrivent '2026-09-01' (sous Oracle : TO_DATE('01/09/2026','DD/MM/YYYY')). « = ANY » et « != ALL » sont acceptés ; pour les autres ANY/ALL, utilise MIN, MAX ou EXISTS.</p>
+    </div></section>`;
 }
-function fillData(root){ root.querySelectorAll('.sql-data').forEach(box=>{ const d=SQL_DBS[box.dataset.db]; box.innerHTML=d.tables.map(t=>`<h4>${t}</h4>`+resTable(runSql('SELECT * FROM '+t))).join(''); }); }
+function fillData(root){ root.querySelectorAll('.tview').forEach(v=>{
+  const show=t=>{ v.querySelectorAll('.tbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===t)); const box=v.querySelector('.tdata'); box.innerHTML=`<span class="lbl">Contenu de ${t}</span>`+resTable(runSql('SELECT * FROM '+t)); };
+  v.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>show(b.dataset.t)); show(v.querySelector('.tdata').dataset.show); }); }
+function firstTable(x){ const m=(x.sol||'').match(/\bFROM\s+(\w+)/i); return m?m[1]:null; }
 function sqlErr(e,q){ let m=e.message; if(/\b(ANY|ALL)\s*\(/i.test(q)) m+=' — SQLite ne gère pas cette forme de ANY/ALL : réécris-la avec MIN/MAX, IN ou EXISTS (la logique est la même à l’examen sous Oracle).'; return m; }
 function gradeMsg(mine,ref,ordered){
   return mine.columns.length!==ref.columns.length?`Ton résultat a ${mine.columns.length} colonne(s), il en faut ${ref.columns.length}.`:mine.values.length!==ref.values.length?`Ton résultat a ${mine.values.length} ligne(s), il en faut ${ref.values.length}.`:ordered?'Les lignes ne sont pas les bonnes ou pas dans le bon ordre.':'Les lignes ne sont pas les bonnes.';
@@ -2062,17 +2075,20 @@ async function renderSql(){
   if(run && !run.done && sqlMode!=='exam') sqlMode='exam';
   const modes=hasExam?`<div class="row sqlmodes"><button class="chip" data-m="train" aria-pressed="${sqlMode==='train'}">Entraînement</button><button class="chip" data-m="exam" aria-pressed="${sqlMode==='exam'}">Sujet type contrôle</button></div>`:'';
   if(sqlMode==='exam'){ el.innerHTML=modes+'<div id="sqlexam"></div>'; bindModes(el); renderSqlExam(); return; }
+  if(sqlOrder.length!==ex.length) sqlOrder=ex.map((_,i)=>i);
+  if(!(sqlPos>=0 && sqlPos<ex.length)) sqlPos=0;
   const x=ex[sqlOrder[sqlPos]]; const done=store.get('sqldone',{});
   const dbs=[...new Set(ex.map(e=>e.db||'cours'))];
-  el.innerHTML=`${modes}${schemaHTML(x.db)}
+  el.innerHTML=`${modes}
     ${dbs.map(db=>`<div class="sqlnav"><span class="navlbl">${esc(SQL_DBS[db].name)}</span>${ex.map((e,i)=>({e,i})).filter(o=>(o.e.db||'cours')===db).map(({e,i},k)=>`<button class="chip ${done[e.id]?'ok':''}" data-i="${i}" aria-pressed="${sqlOrder[sqlPos]===i}" title="${esc(e.tag)}">${k+1}</button>`).join('')}</div>`).join('')}
+    ${schemaHTML(x.db,false,firstTable(x))}
     <article class="sheet"><div class="sheet-head"><span>${esc(SQL_DBS[x.db||'cours'].name)} · ${esc(x.tag)}${x.lv?' · '+'★'.repeat(x.lv):''}</span><span>${done[x.id]?'<span class="stamp ok">réussi</span>':''}</span></div>
     <div class="sheet-body"><div class="q">${esc(x.q)}</div>
       <textarea id="sql-in" class="sqlin" rows="6" spellcheck="false" placeholder="SELECT …">${esc(store.get('sqldraft-'+x.id,''))}</textarea>
       <div class="row"><button class="btn primary" id="sql-run">Exécuter et vérifier<kbd>Ctrl+Entrée</kbd></button><button class="btn ghost" id="sql-sol">Voir une solution</button><button class="btn ghost" id="sql-next">Exercice suivant</button></div>
       <div id="sql-out"></div></div></article>`;
   bindModes(el); fillData(el);
-  el.querySelectorAll('.sqlnav button').forEach(b=>b.onclick=()=>{ sqlPos=sqlOrder.indexOf(+b.dataset.i); renderSql(); });
+  el.querySelectorAll('.sqlnav button').forEach(b=>b.onclick=()=>{ if(sqlOrder.length!==ex.length) sqlOrder=ex.map((_,i)=>i); sqlPos=Math.max(0,sqlOrder.indexOf(+b.dataset.i)); renderSql(); });
   const ta=$('#sql-in'); ta.oninput=()=>store.set('sqldraft-'+x.id, ta.value);
   ta.onkeydown=e=>{ if(e.key==='Enter' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); $('#sql-run').click(); } };
   $('#sql-next').onclick=()=>{ sqlPos=(sqlPos+1)%ex.length; renderSql(); };
