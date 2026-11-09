@@ -228,16 +228,46 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
 .qcm button.bad{border-color:var(--ko);background:var(--ko-tint)}
 .qcm button:disabled{cursor:default;color:var(--ink)}
 .toc{display:flex;flex-wrap:wrap;gap:6px}
+/* Fiches : sommaire à gauche, une fiche à la fois */
+.nlay{display:grid;grid-template-columns:270px minmax(0,1fr);gap:22px;align-items:start}
+.nside{position:sticky;top:12px;display:flex;flex-direction:column;gap:10px}
+.ntoc{display:flex;flex-direction:column;gap:2px;border:none!important;padding:0}
+.ntoc a{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:14px;line-height:1.35;border:none!important;margin:0!important}
+.ntoc a span{white-space:normal}
+.ntoc a i{font:600 11.5px var(--f-mono);font-style:normal;min-width:18px;color:var(--muted)}
+.ntoc a:hover{background:var(--surface);color:var(--ink)}
+.ntoc a[aria-current="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:inset 3px 0 0 var(--cc,var(--accent))}
+.ntoc .none{font-size:13px;color:var(--muted);padding:8px 10px}
+.nsel{display:none}
+.nfoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.nfoot .btn{max-width:48%;text-align:left}
+.nfoot .btn span{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.ntools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 18px}
+.ntools .hint{font-size:13px}
+@media (max-width:820px){ .nlay{grid-template-columns:1fr} .nside{position:static} .ntoc{display:none} .nsel{display:block} }
 .toc a{font-size:13px;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--ink);text-decoration:none;background:var(--surface)}
 .toc a:hover{border-color:var(--accent)}
 #notes{display:flex;flex-direction:column;gap:14px}
 .note{scroll-margin-top:16px}
-.note h2{font-size:21px}
-.notebody{line-height:1.65;max-width:75ch}
-.notebody p,.notebody ul,.notebody ol,.notebody dl{margin:0 0 10px}
-.notebody dt{font-weight:600;margin-top:8px}
-.notebody dd{margin:2px 0 0 18px;color:var(--muted)}
-.notebody li{margin:3px 0}
+.note h2{font-size:clamp(22px,3vw,27px);margin:0 0 6px}
+.notebody{line-height:1.7;max-width:78ch;font-size:16.5px}
+.notebody p,.notebody ul,.notebody ol{margin:0 0 16px}
+.notebody b{color:var(--ink)}
+.notebody ul,.notebody ol{padding-left:22px}
+.notebody li{margin:6px 0}
+.notebody li::marker{color:var(--cc,var(--accent))}
+.notebody h3{font-size:17px;margin:24px 0 8px}
+.notebody dl{display:grid;grid-template-columns:minmax(140px,30%) 1fr;margin:0 0 18px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.notebody dt,.notebody dd{padding:11px 14px;margin:0;border-top:1px solid var(--line)}
+.notebody dt:first-of-type,.notebody dt:first-of-type+dd{border-top:none}
+.notebody dt{font-weight:650;background:var(--tint)}
+.notebody dd{color:var(--ink)}
+@media (max-width:620px){ .notebody dl{grid-template-columns:1fr} .notebody dd{border-top:none;padding-top:0;background:var(--tint)} }
+.notebody pre{font:14px/1.6 var(--f-mono);background:var(--tint);border:1px solid var(--line);border-left:3px solid var(--cc,var(--accent));border-radius:8px;padding:12px 16px;margin:0 0 18px;overflow-x:auto;white-space:pre}
+.notebody code{font:0.92em var(--f-mono);background:var(--tint);padding:1px 5px;border-radius:4px}
+/* Mode « se tester » : définitions et exemples cachés jusqu'au clic */
+.notebody.quiz dd,.notebody.quiz pre{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .15s}
+.notebody.quiz dd.shown,.notebody.quiz pre.shown{filter:none;cursor:auto;user-select:auto}
 .grpnote{display:block;margin:0;font-size:13px;color:var(--warn);font-weight:600}
 .countdown .grpnote{margin-top:8px}
 #v-home .grpnote{margin-top:-14px}
@@ -475,9 +505,14 @@ details.schema h4{margin:10px 0 0;font-size:13px}
 
   <!-- FICHES -->
   <section id="v-fiches" class="view" hidden>
-    <input class="search" id="n-search" type="search" placeholder="Chercher dans les fiches">
-    <div class="toc" id="n-toc"></div>
-    <div id="notes"></div>
+    <div class="nlay">
+      <aside class="nside">
+        <input class="search" id="n-search" type="search" placeholder="Chercher dans les fiches">
+        <div class="ntoc" id="n-toc" role="navigation" aria-label="Sommaire des fiches"></div>
+        <select class="sel nsel" id="n-sel" aria-label="Choisir une fiche"></select>
+      </aside>
+      <div id="notes"></div>
+    </div>
   </section>
 
   <section id="v-carte" class="view" hidden>
@@ -930,14 +965,34 @@ function setupCourse(){
 }
 
 /* ---------- FICHES ---------- */
+let noteCur=null;
 function renderNotes(){
   const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
   const t=norm($('#n-search').value.trim());
   const strip=h=>h.replace(/<[^>]+>/g,' ');
   const list=C.notes.map((x,i)=>({...x,i})).filter(x=>!t || norm(x.t+' '+strip(x.html)).includes(t));
-  $('#n-toc').innerHTML=list.map(x=>`<a href="#${C.id}-fiches" data-n="${x.i}">${esc(x.t)}</a>`).join('');
-  $('#n-toc').querySelectorAll('a').forEach(a=>a.onclick=e=>{ e.preventDefault(); const el=document.getElementById('note-'+a.dataset.n); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); });
-  $('#notes').innerHTML = list.map(x=>`<article class="sheet note" id="note-${x.i}"><div class="sheet-head"><span>${esc(C.code)} · fiche ${x.i+1}</span><span>${esc(x.slides||'')}</span></div><div class="sheet-body"><h2>${esc(x.t)}</h2><div class="notebody">${x.html}</div></div></article>`).join('') || '<div class="empty">Aucun résultat.</div>';
+  if(noteCur===null || noteCur.c!==C.id) noteCur={c:C.id,i:+store.get('note-'+C.id,0)||0};
+  if(list.length && !list.some(x=>x.i===noteCur.i)) noteCur.i=list[0].i;
+  const cur=noteCur.i;
+  $('#n-toc').innerHTML=list.map(x=>`<a href="#${C.id}-fiches" data-n="${x.i}" aria-current="${x.i===cur}"><i>${x.i+1}</i><span>${esc(x.t)}</span></a>`).join('') || '<span class="none">Aucune fiche ne contient ce mot.</span>';
+  $('#n-sel').innerHTML=list.map(x=>`<option value="${x.i}" ${x.i===cur?'selected':''}>${x.i+1}. ${esc(x.t)}</option>`).join('');
+  const go=i=>{ noteCur.i=i; store.set('note-'+C.id,i); renderNotes(); const top=$('#v-fiches').getBoundingClientRect().top; if(top<0) $('#v-fiches').scrollIntoView({block:'start'}); };
+  $('#n-toc').querySelectorAll('a').forEach(a=>a.onclick=e=>{ e.preventDefault(); go(+a.dataset.n); });
+  $('#n-sel').onchange=e=>go(+e.target.value);
+  const x=C.notes[cur];
+  if(!list.length || !x){ $('#notes').innerHTML='<div class="empty">Aucun résultat.</div>'; return; }
+  const pos=list.findIndex(y=>y.i===cur), prev=list[pos-1], next=list[pos+1];
+  const quiz=store.get('notequiz',false);
+  const canQuiz=/<(dd|pre)\b/.test(x.html);
+  $('#notes').innerHTML=`<article class="sheet note" style="--cc:${C.color||'var(--accent)'}"><div class="sheet-head"><span>${esc(C.code)} · fiche ${cur+1} / ${C.notes.length}</span><span>${esc(x.slides||'')}</span></div>
+    <div class="sheet-body"><h2>${esc(x.t)}</h2>
+      ${canQuiz?`<div class="ntools"><button class="chip" id="n-quiz" aria-pressed="${quiz}">Se tester</button><span class="hint">${quiz?'Clique sur un passage flouté pour le révéler.':'Cache les définitions et les exemples pour voir si tu les connais.'}</span></div>`:''}
+      <div class="notebody ${quiz&&canQuiz?'quiz':''}">${x.html}</div>
+      <div class="nfoot">${prev?`<button class="btn ghost" data-go="${prev.i}"><span>← Fiche précédente</span>${esc(prev.t)}</button>`:'<i></i>'}${next?`<button class="btn" data-go="${next.i}"><span>Fiche suivante →</span>${esc(next.t)}</button>`:''}</div>
+    </div></article>`;
+  $('#notes').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+  const qb=$('#n-quiz'); if(qb) qb.onclick=()=>{ store.set('notequiz',!quiz); renderNotes(); };
+  $('#notes').querySelectorAll('.notebody.quiz dd,.notebody.quiz pre').forEach(el=>el.onclick=()=>el.classList.add('shown'));
 }
 
 /* ---------- CARTES FLASH ---------- */
