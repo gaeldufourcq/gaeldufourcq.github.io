@@ -587,6 +587,10 @@ html.th-grad .gs-panel{background:#141938;border:1px solid #2f3772}
 html.th-grad .gs-fab{background:var(--grad);color:#fff}
 html.th-grad #v-home header.top .hbtn{background:linear-gradient(135deg,#6a4cf0,#e4572e);border:none;color:#fff}
 html.th-grad #v-home header.top .sel,html.th-grad #v-home header.top .linkbtn{background:rgba(255,255,255,.04);border-color:#3a4285}
+/* listes déroulantes lisibles dans tous les thèmes */
+select option,select optgroup{background-color:var(--surface);color:var(--ink)}
+html.th-grad select{color-scheme:dark}
+html.th-grad select option{background-color:#141938;color:#EEF0FF}
 .sqlnav .chip.ok{border-color:var(--ok);color:var(--ok)}
 .tschema{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:4px;font-size:14.5px}
 .tschema li{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
@@ -1043,7 +1047,7 @@ function renderHome(){
     potes: socialHTML().replace('<h2 class="hh">Entre potes</h2>',''),
     donnees:`<div class="stats">${progressHTML()}<div class="stat wide" id="import"></div></div>`
   };
-  $('#v-home').innerHTML=`<header class="top"><div><div class="ref">BUT1 Informatique</div><h1>Accueil</h1></div><div class="row"><label class="grpsel">Thème <select class="sel" id="theme-sel" aria-label="Thème du site"><option value="original">Original</option><option value="sobre">Sobre (sombre)</option><option value="grad">Dégradé (test)</option></select></label><a href="#accueil" class="linkbtn small" id="guide-open">Comment ça marche ?</a>${installHTML()}</div></header>
+  $('#v-home').innerHTML=`<header class="top"><div><div class="ref">BUT1 Informatique</div><h1>Accueil</h1></div><div class="row"><label class="grpsel">Thème <select class="sel" id="theme-sel" aria-label="Thème du site"><option value="original">Original</option><option value="sobre">Sobre (sombre)</option><option value="grad">Dégradé</option></select></label><a href="#accueil" class="linkbtn small" id="guide-open">Comment ça marche ?</a>${installHTML()}</div></header>
     ${store.get('guide-seen',0)?'':guideHTML()}
     <nav class="htabs" role="tablist">${HT.map(([k,l])=>`<a href="#accueil" role="tab" data-t="${k}" aria-current="${k===tab?'page':'false'}">${l}</a>`).join('')}</nav>
     <div class="hpane">${panes[tab]}</div>`;
