@@ -440,6 +440,63 @@ table.sqlres th{background:var(--tint)}
 code.bits{font:600 .95em var(--f-mono);letter-spacing:.04em;background:var(--tint);padding:1px 6px;border-radius:4px;white-space:nowrap}
 .swatch{display:inline-block;width:1.1em;height:1.1em;border-radius:4px;vertical-align:-.15em;border:1px solid var(--line);margin-left:4px}
 .field input.txt{font-family:var(--f-mono);letter-spacing:.04em;min-width:14ch}
+
+/* ---------- quiz en direct ---------- */
+.livebanner{display:flex;align-items:center;gap:16px;flex-wrap:wrap;text-decoration:none;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 18px;margin:4px 0 6px}
+.livebanner:hover{border-color:var(--accent)}
+.livebanner>span:nth-child(2){flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}
+.livebanner b{font-size:17px}.livebanner>span:nth-child(2) span{font-size:14px;color:var(--muted)}
+.lshps{display:grid;grid-template-columns:repeat(2,22px);gap:4px}.lshps i{font-style:normal;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--lc);color:#fff;font-size:11px}
+.livecode{max-width:120px;font:700 22px var(--f-mono);letter-spacing:.2em;text-align:center}
+.lhost{display:flex;flex-direction:column;gap:18px;padding:8px 0 30px;position:relative}
+.ljoin{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+.lbig{font-size:clamp(17px,2.4vw,24px);margin:6px 0;line-height:1.35}
+.lpin{font:800 clamp(64px,12vw,130px)/1 var(--f-display);letter-spacing:.06em;margin:4px 0}
+.lqr{background:#fff;padding:12px;border-radius:12px;min-width:224px;min-height:224px;display:grid;place-items:center}
+.lsub{text-align:center;color:var(--muted);font:600 14px var(--f-mono);letter-spacing:.04em}
+.lchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:40px}
+.lchip{background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:700;font-size:18px;animation:lpop .35s ease-out}
+@keyframes lpop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.btn.big{font-size:20px;padding:14px 30px}
+.lqhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ltimer{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font:800 32px var(--f-mono);background:var(--ink);color:var(--bg)}
+.ltimer.late{background:#D93A49;color:#fff;animation:lpulse 1s infinite}
+@keyframes lpulse{50%{transform:scale(1.08)}}
+.lq{font-size:clamp(22px,3.4vw,38px);line-height:1.25;text-align:center;margin:0}
+.lopts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lopt{position:relative;display:flex;align-items:center;gap:14px;text-align:left;border:none;border-radius:12px;padding:18px 18px;min-height:86px;background:var(--lc);color:#fff;font:600 clamp(15px,1.7vw,20px)/1.3 var(--f-body);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25);transition:transform .08s,opacity .2s}
+.lopt:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.lopt:disabled{cursor:default}
+.lopt.dim{opacity:.28}.lopt.ok{outline:4px solid var(--ink);outline-offset:3px}
+.lshp{font-size:26px;flex:none;width:34px;text-align:center}
+.ltxt{flex:1}
+.lcnt{font:800 24px var(--f-mono);background:rgba(0,0,0,.22);border-radius:8px;padding:2px 10px}
+.lchk{position:absolute;top:-12px;right:-8px;background:var(--ink);color:var(--bg);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px}
+.lboard{list-style:none;padding:0;margin:0 auto;width:min(640px,100%);display:flex;flex-direction:column;gap:8px}
+.lboard li{display:flex;align-items:center;gap:14px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 18px;font-size:clamp(16px,2vw,22px);animation:lpop .3s ease-out both}
+.lboard li:nth-child(2){animation-delay:.08s}.lboard li:nth-child(3){animation-delay:.16s}.lboard li:nth-child(4){animation-delay:.24s}.lboard li:nth-child(5){animation-delay:.32s}
+.lboard li.me{border-color:var(--accent)}
+.lrk{font:800 1em var(--f-mono);width:30px;color:var(--muted)}.lps{flex:1;font-weight:700}.ldelta{font:600 .8em var(--f-mono);color:var(--ok)}.lboard b{font-family:var(--f-mono)}
+.lpodium{display:grid;grid-template-columns:repeat(3,minmax(0,200px));justify-content:center;align-items:end;gap:12px;margin:10px 0}
+.lpod{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.lpod .lps{font-size:clamp(16px,2.2vw,24px)}.lpod b{font-family:var(--f-mono)}
+.lstep{width:100%;border-radius:10px 10px 0 0;display:grid;place-items:center;font:800 40px var(--f-display);color:#fff;animation:lrise .8s ease-out both}
+.p1 .lstep{height:190px;background:#C99A06;animation-delay:.9s}.p2 .lstep{height:140px;background:#8A94A6;animation-delay:.4s}.p3 .lstep{height:100px;background:#B0703A}
+@keyframes lrise{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+.lconf{position:absolute;inset:-20px 0 0;pointer-events:none;overflow:hidden;z-index:2}
+.lconf i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:lfall linear infinite}
+@keyframes lfall{to{top:110%;transform:rotate(720deg)}}
+.lplay{position:relative;overflow:hidden}
+.lplay .empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:30px 16px}
+.lme{display:flex;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);font:600 13px var(--f-mono);color:var(--muted)}
+.lpq{padding:16px;font-size:18px;font-weight:600;line-height:1.35}
+.lplay .lopts{padding:0 12px 14px}
+.lplay .lopt{min-height:96px}
+.lpick{width:90px;height:90px;border-radius:18px;background:var(--lc);color:#fff;display:grid;place-items:center;font-size:42px;margin-top:10px}
+.lres.ok{box-shadow:inset 0 6px 0 var(--ok)}.lres.ko{box-shadow:inset 0 6px 0 var(--ko)}
+.lplay .lbig,.lplay .lpin{color:var(--ink)}
+.lpts{font:800 44px var(--f-mono);color:var(--ok);margin:0}
+@media (max-width:640px){ .lopts{grid-template-columns:1fr} .lpodium{grid-template-columns:repeat(3,1fr)} .ltimer{width:60px;height:60px;font-size:24px} }
 .sqlnav .chip.ok{border-color:var(--ok);color:var(--ok)}
 .tschema{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:4px;font-size:14.5px}
 .tschema li{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
@@ -460,6 +517,7 @@ details.schema h4{margin:10px 0 0;font-size:13px}
   <section id="v-home" class="view" hidden></section>
   <section id="v-express" class="view" hidden></section>
   <section id="v-duel" class="view" hidden></section>
+  <section id="v-live" class="view" hidden></section>
   <div id="coursewrap" class="view">
   <header class="top">
     <div>
@@ -870,7 +928,8 @@ function renderHome(){
   const due=`<div class="stat"><span class="lbl">À revoir aujourd’hui</span><b>${dueTot} carte${dueTot>1?'s':''}</b>
         <span class="info">${dueBy.map(x=>`<a href="#${x.c.id}-cartes" data-c="${x.c.id}" class="duego">${esc(x.c.code)} : ${x.due} à revoir, ${x.nw} nouvelles</a>`).join('<br>')}</span></div>`;
   const panes={
-    apercu:`<h2 class="hh">Prochains contrôles</h2>
+    apercu:`<a class="livebanner" href="#live"><span class="lshps"><i style="--lc:#D93A49">▲</i><i style="--lc:#2D6BDB">◆</i><i style="--lc:#C99A06">●</i><i style="--lc:#2A8C3E">■</i></span><span><b>Quiz en direct</b><span>Toute la classe joue en même temps sur son téléphone, classement en direct.</span></span><span class="btn primary">Jouer</span></a>
+      <h2 class="hh">Prochains contrôles</h2>
       <div class="grpbar">${groupPicker()}<span class="grpnote">${esc(groupNote(false))}</span></div>
       <div class="hlist">${(showAll?rowList:rowList.slice(0,3)).join('')||'<div class="empty">Aucun contrôle prévu.</div>'}</div>
       ${rowList.length>3?`<button class="linkbtn small" id="all-exams">${showAll?'Afficher seulement les 3 prochains':`Voir les ${rowList.length} contrôles`}</button>`:''}
@@ -904,7 +963,7 @@ function renderHome(){
   $('#v-home').querySelectorAll('.htile').forEach(a=>a.onclick=e=>{ e.preventDefault(); goCourse(a.getAttribute('href').slice(1).split('-')[0]); });
 }
 function showHome(){
-  $('#coursewrap').hidden=true; $('#v-home').hidden=false; $('#v-express').hidden=true; $('#v-duel').hidden=true; queuePresence();
+  $('#coursewrap').hidden=true; $('#v-home').hidden=false; $('#v-express').hidden=true; $('#v-duel').hidden=true; $('#v-live').hidden=true; queuePresence();
   document.querySelectorAll('.course').forEach(b=>b.setAttribute('aria-pressed', b.dataset.c==='accueil'));
   renderHome();
 }
@@ -922,6 +981,7 @@ function views(){
 let pending=null; // réglages demandés depuis l'accueil (mode, partie)
 function goCourse(cid, p){ pending=p||null; const h=`#${cid}-cartes`; if(location.hash===h) route(); else location.hash=h; }
 function route(){
+  if(live && !/^live/.test(location.hash.slice(1))) leaveLive();
   let h=location.hash.slice(1), cid=COURSES[0].id, v='cartes';
   const m=h.match(/^([a-z0-9]+)-([a-z]+)$/);
   if(m && COURSES.some(c=>c.id===m[1])){ cid=m[1]; v=m[2]; }
@@ -929,8 +989,10 @@ function route(){
   else if(h==='express'){ showExpress('express'); return; }
   else if(h==='soir'){ showExpress('soir'); return; }
   else if(h==='duel'){ showDuel(); return; }
+  else if(h==='live'){ showLive(null); return; }
+  else if(/^live-\d{4}$/.test(h)){ showLive(h.slice(5)); return; }
   else { showHome(); return; }
-  $('#coursewrap').hidden=false; $('#v-home').hidden=true; $('#v-express').hidden=true; $('#v-duel').hidden=true; queuePresence();
+  $('#coursewrap').hidden=false; $('#v-home').hidden=true; $('#v-express').hidden=true; $('#v-duel').hidden=true; $('#v-live').hidden=true; queuePresence();
   const changed = !C || C.id!==cid || !route.done;
   C=COURSES.find(c=>c.id===cid)||COURSES[0]; store.set('course',C.id);
   const vs=views();
@@ -1556,6 +1618,203 @@ GENS.push(
   }}
 );
 
+/* ---------- quiz en direct : un écran (vidéoprojecteur) + les téléphones de la classe ---------- */
+const LIVE_COL=['#D93A49','#2D6BDB','#C99A06','#2A8C3E'];
+const LIVE_SHP=['▲','◆','●','■'];
+let live=null, liveTick=null;
+function liveQuestions(cid,code,n){
+  const c=COURSES.find(x=>x.id===cid); if(!c) return null;
+  const rnd=seeded('live-'+code+'-'+cid);
+  let base=c.qa.filter(q=>!q.strike && !q.custom && !q.approved);
+  const short=base.filter(q=>q.a.length<=180); if(short.length>=n+6) base=short;
+  base=base.sort((a,b)=>a.id.localeCompare(b.id));
+  return {c, qs:sshuffle(base,rnd).slice(0,n).map(q=>{
+    const pool=sshuffle(base.filter(x=>x.id!==q.id && x.a!==q.a),rnd).sort((a,b)=>(a.s===q.s?0:1)-(b.s===q.s?0:1));
+    const seen=new Set([q.a]), ds=[]; for(const x of pool){ if(ds.length>=3) break; if(!seen.has(x.a)){ seen.add(x.a); ds.push(x.a); } }
+    return {q, opts:sshuffle([{t:q.a,ok:true},...ds.map(t=>({t,ok:false}))],rnd)};
+  })};
+}
+const livePts=(a,dur)=> a ? Math.max(500, Math.round(1000*(1-Math.min(a[1],dur*1000)/(dur*1000)/2))) : 0;
+function liveScores(players, qs, upto, dur){
+  return players.map(p=>{ const ans=p.presence.ans||{}; let tot=0, last=0, ok=0;
+    for(let i=0;i<=upto && i<qs.length;i++){ const a=ans[i]; const good=a && qs[i].opts[a[0]] && qs[i].opts[a[0]].ok; const g=good?livePts(a,dur):0; tot+=g; if(good) ok++; if(i===upto) last=g; }
+    return {p, pseudo:p.presence.pseudo||'Anonyme', tot, last, ok};
+  }).sort((a,b)=>b.tot-a.tot || a.pseudo.localeCompare(b.pseudo));
+}
+function livePlayers(){ return live && live.room ? live.room.peers().filter(p=>p.presence && p.presence.role==='player') : []; }
+function liveHostPeer(){ return live && live.room ? live.room.peers().find(p=>!p.isMe && p.presence && p.presence.role==='host') : null; }
+function showLive(code){
+  $('#coursewrap').hidden=true; $('#v-home').hidden=true; $('#v-express').hidden=true; $('#v-duel').hidden=true; $('#v-live').hidden=false;
+  document.querySelectorAll('.course').forEach(b=>b.setAttribute('aria-pressed','false'));
+  if(code && (!live || live.code!==code)) { joinLive(code); return; }
+  renderLive(true);
+}
+async function liveRoom(code){
+  if(!social.room){ for(let i=0;i<20 && !social.room;i++) await new Promise(r=>setTimeout(r,250)); }
+  if(!social.room) return null;
+  return social.room.join('live-'+code);
+}
+async function hostLive(cid,n,dur){
+  await leaveLive();
+  const code=String(rint(1000,9999)); const set=liveQuestions(cid,code,n);
+  live={role:'host', code, cid, n:set.qs.length, dur, phase:'lobby', i:0, tq:0, room:null, ...set};
+  location.hash='live';
+  live.room=await liveRoom(code);
+  if(!live.room){ live.err='Le quiz en direct a besoin de la connexion au site (Firebase). Recharge la page et réessaie.'; renderLive(true); return; }
+  live.room.onPeers(()=>renderLive(false), ()=>{}); livePush(); renderLive(true);
+}
+function livePush(){ if(!live || !live.room) return;
+  if(live.role==='host') live.room.presence({role:'host', pseudo:pseudo()||'Hôte', cid:live.cid, n:live.n, dur:live.dur, phase:live.phase, i:live.i}).catch(()=>{});
+  else live.room.presence({role:'player', pseudo:live.pseudo, ans:live.ans}).catch(()=>{});
+}
+async function joinLive(code){
+  await leaveLive();
+  live={role:'player', code, pseudo:pseudo(), ans:{}, room:null, qs:null, seen:{}, view:''};
+  if(location.hash!=='#live-'+code) history.replaceState(null,'','#live-'+code);
+  if(!live.pseudo){ renderLive(true); return; }
+  await liveConnect();
+}
+async function liveConnect(){
+  live.room=await liveRoom(live.code);
+  if(!live.room){ live.err='Connexion impossible pour le moment. Recharge la page.'; renderLive(true); return; }
+  live.room.onPeers(()=>renderLive(false), ()=>{}); livePush(); renderLive(true);
+}
+async function leaveLive(){ clearInterval(liveTick); if(live && live.room){ const r=live.room; live.room=null; await r.leave().catch(()=>{}); } live=null; }
+function liveSetPhase(phase){ live.phase=phase; if(phase==='q') live.tq=Date.now(); livePush(); renderLive(true); }
+
+function renderLive(full){
+  const el=$('#v-live'); if(el.hidden) return;
+  clearInterval(liveTick);
+  const top=`<header class="top"><div><div class="ref">Quiz en direct</div><h1>${live&&live.code?`Code ${esc(live.code)}`:'Quiz en direct'}</h1></div><a class="btn ghost" href="#accueil" id="live-quit">Quitter</a></header>`;
+  if(!live){ el.innerHTML=top+liveSetupHTML(); bindLiveSetup(); return; }
+  if(live.err){ el.innerHTML=top+`<article class="sheet"><div class="empty">${esc(live.err)}</div></article>`; return; }
+  if(live.role==='host') return renderLiveHost(el,top,full);
+  return renderLivePlayer(el,top);
+}
+function liveSetupHTML(){
+  const cs=COURSES.filter(c=>c.qa.length>=10);
+  return `<div class="stats">
+    <div class="stat wide"><span class="lbl">Rejoindre une partie</span><span class="info">Entre le code affiché au tableau.</span>
+      <div class="row"><input class="search livecode" id="live-code" inputmode="numeric" maxlength="4" placeholder="1234"><input class="search" id="live-pseudo" maxlength="20" placeholder="Ton pseudo" value="${esc(pseudo())}" style="max-width:200px"><button class="btn primary" id="live-join">Rejoindre</button></div></div>
+    <div class="stat wide"><span class="lbl">Lancer une partie pour la classe</span><span class="info">Affiche cette page sur le vidéoprojecteur : les autres rejoignent avec leur téléphone (code ou QR code), répondent le plus vite possible et le classement s’affiche après chaque question.</span>
+      <div class="row"><select class="sel" id="live-course" aria-label="Matière">${cs.map(c=>`<option value="${c.id}">${esc(c.code)} · ${esc(c.short)}</option>`).join('')}</select>
+      <select class="sel" id="live-n" aria-label="Nombre de questions"><option value="5">5 questions</option><option value="10" selected>10 questions</option><option value="15">15 questions</option></select>
+      <select class="sel" id="live-dur" aria-label="Temps par question"><option value="15">15 s par question</option><option value="20" selected>20 s par question</option><option value="30">30 s par question</option></select>
+      <button class="btn primary" id="live-host">Créer la partie</button></div></div></div>`;
+}
+function bindLiveSetup(){
+  const go=()=>{ const v=$('#live-code').value.trim(); const ps=$('#live-pseudo').value.trim().slice(0,20); if(!/^\d{4}$/.test(v)){ $('#live-code').focus(); return; } if(!ps){ $('#live-pseudo').focus(); return; } store.set('pseudo',ps); location.hash='live-'+v; };
+  $('#live-join').onclick=go; $('#live-code').onkeydown=e=>{ if(e.key==='Enter') go(); };
+  $('#live-host').onclick=()=>hostLive($('#live-course').value, +$('#live-n').value, +$('#live-dur').value);
+}
+function liveOpts(q, mode, counts, picked){
+  return `<div class="lopts">${q.opts.map((o,k)=>`<button type="button" class="lopt ${mode==='reveal'?(o.ok?'ok':'dim'):''} ${picked===k?'picked':''}" data-k="${k}" style="--lc:${LIVE_COL[k]}" ${mode==='play'?'':'disabled'}>
+    <span class="lshp">${LIVE_SHP[k]}</span><span class="ltxt">${nl(o.t)}</span>${counts?`<span class="lcnt">${counts[k]}</span>`:''}${mode==='reveal'&&o.ok?'<span class="lchk">✔</span>':''}</button>`).join('')}</div>`;
+}
+function liveBoard(sc, n, hi){
+  if(!sc.length) return '<p class="hint">Personne n’a rejoint la partie.</p>';
+  return `<ol class="lboard">${sc.slice(0,n).map((s,r)=>`<li class="${hi&&s.p.isMe?'me':''}"><span class="lrk">${r+1}</span><span class="lps">${esc(s.pseudo)}</span>${s.last?`<span class="ldelta">+${s.last}</span>`:''}<b>${s.tot}</b></li>`).join('')}</ol>`;
+}
+function renderLiveHost(el,top,full){
+  const players=livePlayers(), q=live.qs[live.i];
+  const ans=players.filter(p=>p.presence.ans && p.presence.ans[live.i]);
+  const joinUrl=location.origin+location.pathname+'#live-'+live.code;
+  if(live.phase==='lobby'){
+    const chips=players.map(p=>`<span class="lchip">${esc(p.presence.pseudo||'Anonyme')}</span>`).join('');
+    if(full || !$('#live-lobby')){
+      el.innerHTML=top+`<section class="lhost" id="live-lobby"><div class="ljoin"><div><p class="lbig">Va sur <b>${esc(location.host)}</b><br>→ Accueil → <b>Quiz en direct</b></p><p class="lbig">Code de la partie</p><div class="lpin">${esc(live.code)}</div></div><div class="lqr" id="live-qr"></div></div>
+        <p class="lsub">${esc(live.c.code)} · ${live.n} questions · ${live.dur} s par question</p>
+        <div class="lchips" id="live-chips">${chips}</div><p class="lsub" id="live-np">${players.length} joueur${players.length>1?'s':''}</p>
+        <div class="row" style="justify-content:center"><button class="btn primary big" id="live-start" ${players.length?'':'disabled'}>Lancer le quiz</button></div></section>`;
+      $('#live-start').onclick=()=>{ live.i=0; liveSetPhase('q'); };
+      loadQR().then(()=>{ const b=$('#live-qr'); if(b && window.QRCode){ b.innerHTML=''; new QRCode(b,{text:joinUrl,width:200,height:200,colorDark:'#111',colorLight:'#fff'}); } }).catch(()=>{});
+    } else { $('#live-chips').innerHTML=chips; $('#live-np').textContent=`${players.length} joueur${players.length>1?'s':''}`; $('#live-start').disabled=!players.length; }
+    return;
+  }
+  if(live.phase==='q'){
+    const left=()=>Math.max(0, live.dur - (Date.now()-live.tq)/1000);
+    if(full || !$('#live-q')){
+      el.innerHTML=top+`<section class="lhost" id="live-q"><div class="lqhead"><span class="lsub">Question ${live.i+1} / ${live.n}</span><div class="ltimer" id="live-timer"></div><span class="lsub" id="live-na"></span></div>
+        <h2 class="lq">${nl(q.q.q)}</h2>${liveOpts(q,'host')}<div class="row" style="justify-content:center"><button class="btn ghost" id="live-skip">Afficher la réponse</button></div></section>`;
+      $('#live-skip').onclick=()=>liveSetPhase('reveal');
+    }
+    const upd=()=>{ const t=left(), na=livePlayers().filter(p=>p.presence.ans && p.presence.ans[live.i]).length, np=livePlayers().length;
+      const tm=$('#live-timer'); if(!tm) return clearInterval(liveTick); tm.textContent=Math.ceil(t); tm.classList.toggle('late',t<=5);
+      $('#live-na').textContent=`${na} / ${np} réponse${na>1?'s':''}`;
+      if(t<=0 || (np && na>=np)) liveSetPhase('reveal'); };
+    upd(); liveTick=setInterval(upd,250); return;
+  }
+  if(live.phase==='reveal'){
+    const counts=[0,0,0,0]; ans.forEach(p=>{ const k=p.presence.ans[live.i][0]; if(counts[k]!=null) counts[k]++; });
+    const okN=ans.filter(p=>q.opts[p.presence.ans[live.i][0]].ok).length;
+    el.innerHTML=top+`<section class="lhost"><div class="lqhead"><span class="lsub">Question ${live.i+1} / ${live.n}</span><span class="lsub">${okN} bonne${okN>1?'s':''} réponse${okN>1?'s':''} sur ${players.length}</span></div>
+      <h2 class="lq">${nl(q.q.q)}</h2>${liveOpts(q,'reveal',counts)}
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="live-next">Voir le classement</button></div></section>`;
+    $('#live-next').onclick=()=>liveSetPhase('board'); return;
+  }
+  if(live.phase==='board'){
+    const sc=liveScores(players, live.qs, live.i, live.dur); const last=live.i>=live.n-1;
+    el.innerHTML=top+`<section class="lhost"><h2 class="lq">Classement</h2>${liveBoard(sc,5)}
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="live-next">${last?'Voir le podium':'Question suivante'}</button></div></section>`;
+    $('#live-next').onclick=()=>{ if(last) liveSetPhase('end'); else { live.i++; liveSetPhase('q'); } }; return;
+  }
+  if(live.phase==='end'){
+    const sc=liveScores(players, live.qs, live.n-1, live.dur);
+    if(full || !$('#live-end')){
+      el.innerHTML=top+`<section class="lhost" id="live-end">${confetti()}<h2 class="lq">Podium</h2>${podium(sc)}${sc.length>3?liveBoard(sc,10):''}
+        <div class="row" style="justify-content:center"><button class="btn primary" id="live-again">Nouvelle partie</button></div></section>`;
+      $('#live-again').onclick=async()=>{ await leaveLive(); renderLive(true); };
+    }
+  }
+}
+function podium(sc){
+  const p=[sc[1],sc[0],sc[2]], h=[2,1,3];
+  return `<div class="lpodium">${p.map((s,j)=>s?`<div class="lpod p${h[j]}"><span class="lps">${esc(s.pseudo)}</span><b>${s.tot}</b><div class="lstep">${h[j]}</div></div>`:'<div class="lpod"></div>').join('')}</div>`;
+}
+function confetti(){ let s=''; for(let i=0;i<70;i++) s+=`<i style="left:${Math.random()*100}%;background:${LIVE_COL[i%4]};animation-delay:${(Math.random()*2.5).toFixed(2)}s;animation-duration:${(2.5+Math.random()*2).toFixed(2)}s;transform:rotate(${rint(0,360)}deg)"></i>`; return `<div class="lconf" aria-hidden="true">${s}</div>`; }
+function renderLivePlayer(el,top){
+  if(!live.pseudo){
+    el.innerHTML=top+`<article class="sheet"><div class="sheet-body"><div class="q">Choisis ton pseudo pour rejoindre la partie ${esc(live.code)}</div><div class="row"><input class="search" id="live-ps" maxlength="20" placeholder="Ton pseudo" style="max-width:240px"><button class="btn primary" id="live-ok">Rejoindre</button></div></div></article>`;
+    const ok=()=>{ const v=$('#live-ps').value.trim().slice(0,20); if(!v) return; store.set('pseudo',v); live.pseudo=v; liveConnect(); };
+    $('#live-ok').onclick=ok; $('#live-ps').onkeydown=e=>{ if(e.key==='Enter') ok(); }; $('#live-ps').focus(); return;
+  }
+  if(!live.room){ el.innerHTML=top+'<article class="sheet"><div class="empty">Connexion…</div></article>'; return; }
+  const host=liveHostPeer();
+  if(!host){ live.view='wait'; el.innerHTML=top+`<article class="sheet lplay"><div class="empty"><p class="lbig">En attente de la partie ${esc(live.code)}…</p><p class="hint">Vérifie le code affiché au tableau. Tu es connecté en tant que <b>${esc(live.pseudo)}</b>.</p></div></article>`; return; }
+  const h=host.presence;
+  if(!live.qs || live.cid!==h.cid || live.n!==h.n){ const set=liveQuestions(h.cid,live.code,h.n); if(!set){ el.innerHTML=top+'<div class="empty">Matière inconnue.</div>'; return; } live.qs=set.qs; live.cid=h.cid; live.n=h.n; live.c=set.c; }
+  const i=+h.i||0, q=live.qs[i], a=live.ans[i];
+  const key=h.phase+'|'+i+'|'+(a?1:0);
+  if(key===live.view) return; live.view=key;
+  const sc=()=>liveScores(live.room.peers().filter(p=>p.presence && p.presence.role==='player'), live.qs, h.phase==='q'?i-1:i, h.dur);
+  const myRank=()=>{ const s=sc(); const r=s.findIndex(x=>x.p.isMe); return r<0?null:{r:r+1,of:s.length,me:s[r]}; };
+  const head=`<div class="lme"><span>${esc(live.pseudo)}</span><span>${esc(live.c.code)} · question ${Math.min(i+1,live.n)} / ${live.n}</span></div>`;
+  if(h.phase==='lobby'){ el.innerHTML=top+`<article class="sheet lplay">${head}<div class="empty"><p class="lbig">Tu es dans la partie !</p><p class="hint">Regarde l’écran : le quiz commence bientôt.</p></div></article>`; return; }
+  if(h.phase==='q'){
+    if(!live.seen[i]) live.seen[i]=Date.now();
+    if(a){ el.innerHTML=top+`<article class="sheet lplay">${head}<div class="empty"><p class="lbig">Réponse envoyée</p><p class="hint">Attends la fin du temps…</p><div class="lpick" style="--lc:${LIVE_COL[a[0]]}">${LIVE_SHP[a[0]]}</div></div></article>`; return; }
+    el.innerHTML=top+`<article class="sheet lplay">${head}<div class="lpq">${nl(q.q.q)}</div>${liveOpts(q,'play')}</article>`;
+    el.querySelectorAll('.lopt').forEach(b=>b.onclick=()=>{ if(live.ans[i]) return; live.ans[i]=[+b.dataset.k, Date.now()-live.seen[i]]; livePush(); live.view=''; renderLive(false); if(navigator.vibrate) navigator.vibrate(30); });
+    return;
+  }
+  if(h.phase==='reveal' || h.phase==='board'){
+    const good=a && q.opts[a[0]].ok; const pts=good?livePts(a,h.dur):0; const mr=myRank();
+    el.innerHTML=top+`<article class="sheet lplay lres ${good?'ok':'ko'}">${head}<div class="empty"><p class="lbig">${a?(good?'Bonne réponse !':'Raté…'):'Temps écoulé'}</p>${good?`<p class="lpts">+${pts}</p>`:''}
+      ${!good?`<p class="hint">La bonne réponse : ${nl(q.opts.find(o=>o.ok).t)}</p>`:''}
+      ${mr?`<p class="lbig">${mr.r}<sup>${mr.r===1?'er':'e'}</sup> sur ${mr.of} · ${mr.me.tot} pts</p>`:''}</div></article>`;
+    if(h.phase==='reveal'){ live.view=key; setTimeout(()=>{ if(live && live.view===key){ live.view=''; } },1500); }
+    return;
+  }
+  if(h.phase==='end'){
+    const mr=myRank();
+    el.innerHTML=top+`<article class="sheet lplay">${mr&&mr.r<=3?confetti():''}${head}<div class="empty"><p class="lbig">Partie terminée</p>${mr?`<p class="lpin">${mr.r}<sup>${mr.r===1?'er':'e'}</sup></p><p class="lbig">sur ${mr.of} · ${mr.me.tot} points · ${mr.me.ok} / ${live.n} bonnes réponses</p>`:''}<div class="row" style="justify-content:center"><a class="btn ghost" href="#accueil">Accueil</a></div></div></article>`;
+  }
+}
+let qrLoad=null;
+function loadQR(){ if(window.QRCode) return Promise.resolve(); if(qrLoad) return qrLoad;
+  qrLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.onload=res; s.onerror=e=>{ qrLoad=null; rej(e); }; document.head.appendChild(s); });
+  return qrLoad; }
+
 const CG=()=>GENS.filter(g=>(g.c||'r108')===C.id);
 let curGen=GENS[0];
 function renderCalcList(){
@@ -1768,7 +2027,7 @@ function buildExpress(){
 }
 function showExpress(mode){
   xMode=mode||'express';
-  $('#coursewrap').hidden=true; $('#v-home').hidden=true; $('#v-express').hidden=false; $('#v-duel').hidden=true;
+  $('#coursewrap').hidden=true; $('#v-home').hidden=true; $('#v-express').hidden=false; $('#v-duel').hidden=true; $('#v-live').hidden=true;
   document.querySelectorAll('.course').forEach(b=>b.setAttribute('aria-pressed', 'false'));
   buildExpress(); renderExpress();
 }
@@ -2117,7 +2376,7 @@ async function startDuel(code){
 function alertBox(t){ const m=$('#prop-msg')||$('#social'); if(m) m.insertAdjacentHTML('afterbegin',`<p class="stamp ko">${esc(t)}</p>`); }
 function duelPresence(){ if(duel && duel.room) duel.room.presence({pseudo:pseudo()||'Anonyme', i:duel.i, score:duel.score, done:duel.done, ms:duel.done?duel.ms:null}).catch(()=>{}); }
 function showDuel(){
-  $('#coursewrap').hidden=true; $('#v-home').hidden=true; $('#v-express').hidden=true; $('#v-duel').hidden=false;
+  $('#coursewrap').hidden=true; $('#v-home').hidden=true; $('#v-express').hidden=true; $('#v-duel').hidden=false; $('#v-live').hidden=true;
   document.querySelectorAll('.course').forEach(b=>b.setAttribute('aria-pressed','false'));
   if(!duel){ location.hash='accueil'; return; } renderDuel();
 }
