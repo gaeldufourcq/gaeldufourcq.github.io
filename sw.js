@@ -11,6 +11,6 @@ self.addEventListener('fetch',e=>{
   const fonts=/fonts\.(googleapis|gstatic)\.com$/.test(u.hostname);
   const libs=/cdn\.jsdelivr\.net$|cdnjs\.cloudflare\.com$/.test(u.hostname);
   if(!same && !fonts && !libs) return;            // Firebase et le reste : jamais en cache
-  e.respondWith((same ? fetch(r.url,{cache:'no-cache',credentials:'same-origin'}) : r).then(res=>{ if(res && (res.ok || res.type==='opaque')){ const cp=res.clone(); caches.open(CACHE).then(c=>c.put(r,cp)); } return res; })
+  e.respondWith((same ? fetch(r.url,{cache:'no-cache',credentials:'same-origin'}) : fetch(r)).then(res=>{ if(res && (res.ok || res.type==='opaque')){ const cp=res.clone(); caches.open(CACHE).then(c=>c.put(r,cp)); } return res; })
     .catch(()=>caches.match(r).then(m=>m || (r.mode==='navigate'?caches.match('./index.html'):undefined))));
 });
