@@ -564,6 +564,8 @@ html.th-grad #tabs .tg{background:rgba(255,255,255,.06)}html.th-grad #tabs .tg a
 .fopt[open] summary{border-color:var(--accent)}
 .fopt-in{position:absolute;z-index:40;top:calc(100% + 6px);left:0;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(0,0,0,.18);min-width:240px}
 #cd.far{padding:8px 14px}#cd.far b{font-size:20px}
+.ptypes{gap:6px}.ptypes label{cursor:pointer;display:inline-flex;gap:6px;align-items:center}.ptypes input{accent-color:var(--accent)}
+#prop-text{width:100%;box-sizing:border-box}
 .gs-fab{position:fixed;right:21px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:38px;height:38px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .gs-fab:hover{transform:scale(1.06)}
 /* barre d'outils de l'accueil : trois contrôles identiques */
@@ -1269,7 +1271,7 @@ function renderHome(){
       <span class="info">${nx?`Prochain contrôle ${relDays(nx)}`:'Pas de contrôle prévu'}</span></a>`;
   }).join('');
   const hwOpen=hwList().filter(h=>!h.done).length;
-  const HT=[['apercu','Aperçu'],['devoirs','Devoirs'+(hwOpen?` (${hwOpen})`:'')],['revision','Ma révision'],['potes','Entre potes'],['donnees','Mes données']];
+  const HT=[['apercu','Aperçu'],['devoirs','Devoirs'+(hwOpen?` (${hwOpen})`:'')],['revision','Ma révision'],['potes','Entre potes'+((social.isOwner&&social.proposals.reduce((n,d)=>n+((d.items||[]).length),0))?` (${social.proposals.reduce((n,d)=>n+((d.items||[]).length),0)})`:'')],['donnees','Mes données']];
   let tab=store.get('home-tab','apercu'); if(!HT.some(x=>x[0]===tab)) tab='apercu';
   const rowList=rows.split('<div class="hrow').slice(1).map(r=>'<div class="hrow'+r);
   const showAll=store.get('home-allexams',0);
@@ -3335,7 +3337,7 @@ async function initSocial(){
       paintSocial(); }, ()=>{});
     db.collection('weekly').onSnapshot(s=>{ social.weekly=s.docs.map(d=>({id:d.id,...d.data()})); const w=$('#s-week'); if(w) w.innerHTML=weeklyHTML(); }, ()=>{});
     db.collection('cards').onSnapshot(s=>{ social.approved=s.docs.map(d=>({id:d.id,...d.data()})); integrateApproved(); }, ()=>{});
-    if(social.isOwner) db.collection('proposals').onSnapshot(s=>{ social.proposals=s.docs.map(d=>({id:d.id,...d.data()})); paintSocial(true); }, ()=>{});
+    if(social.isOwner) db.collection('proposals').onSnapshot(s=>{ social.proposals=s.docs.map(d=>({id:d.id,...d.data()})); paintSocial(true); if(!$('#v-home').hidden && store.get('home-tab','apercu')!=='potes') renderHome(); }, ()=>{});
   }
   if(room){
     room.onPeers(()=>paintSocial(), ()=>{ social.room=null; paintSocial(); });
@@ -3372,6 +3374,7 @@ function integrateApproved(){
   if(!$('#v-home').hidden) renderHome();
 }
 
+const IDEA_TYPES=[['idee','💡 Idée pour le site'],['bug','🐞 Un bug'],['carte','🃏 Une carte qui manque']];
 function socialHTML(){
   return `<h2 class="hh">Entre potes</h2><div class="stats" id="social">${socialInner()}</div>`;
 }
@@ -3412,7 +3415,11 @@ function socialInner(){
   const me=myStats();
   const joined=store.get('board-join',0) || social.board.some(r=>r.id===social.uid);
   const canJoin = social.db && social.uid && social.canWrite;
-  const props = social.isOwner && social.proposals.length ? `<div class="stat wide"><span class="lbl">Cartes proposées · à valider</span><ul class="props">${social.proposals.flatMap(d=>(d.items||[]).map((it,j)=>`<li><span><span class="code">${esc((COURSES.find(c=>c.id===it.course)||{}).code||'?')}</span> <b>${esc(it.q)}</b><br><span class="hint">${esc(it.a)} · par ${esc(it.by||'?')}</span></span><span class="row"><button class="btn ok small" data-ok="${esc(d.id)}|${j}">Valider</button><button class="btn ko small" data-no="${esc(d.id)}|${j}">Refuser</button></span></li>`)).join('')}</ul></div>` : '';
+  const inbox = social.proposals.flatMap(d=>(d.items||[]).map((it,j)=>({it,j,d}))).sort((a,b)=>(b.it.at||0)-(a.it.at||0));
+  const props = social.isOwner && inbox.length ? `<div class="stat wide"><span class="lbl">Messages reçus (${inbox.length})</span><ul class="props">${inbox.map(({it,j,d})=>{ const t=it.type||'carte', when=it.at?new Date(it.at).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';
+      return t==='carte'
+      ? `<li><span><span class="code">🃏 ${esc((COURSES.find(c=>c.id===it.course)||{}).code||'?')}</span> <b>${esc(it.q)}</b><br><span class="hint">${esc(it.a)} · par ${esc(it.by||'?')} · ${when}</span></span><span class="row"><button class="btn ok small" data-ok="${esc(d.id)}|${j}">Ajouter la carte</button><button class="btn ko small" data-no="${esc(d.id)}|${j}">Refuser</button></span></li>`
+      : `<li><span><span class="code">${t==='bug'?'🐞 Bug':'💡 Idée'}</span> ${esc(it.text||'')}<br><span class="hint">par ${esc(it.by||'?')} · ${when}</span></span><span class="row"><button class="btn ghost small" data-no="${esc(d.id)}|${j}">Supprimer</button></span></li>`; }).join('')}</ul></div>` : '';
   return `
     <div class="stat"><span class="lbl">Mon pseudo</span>
       <div class="row"><input class="search" id="pseudo-in" maxlength="20" placeholder="Ton pseudo" value="${esc(pseudo())}" style="max-width:220px"><button class="btn ghost" id="pseudo-save">Enregistrer</button></div>
@@ -3426,11 +3433,13 @@ function socialInner(){
       <span class="info">Même 10 questions en QCM pour vous deux, le meilleur score gagne.</span>
       <div class="row"><select class="sel" id="duel-course" aria-label="Matière du duel">${COURSES.filter(c=>c.qa.length>=8).map(c=>`<option value="${c.id}">${esc(c.code)}</option>`).join('')}</select><button class="btn primary" id="duel-new">Créer un duel</button></div>
       <div class="row"><input class="search" id="duel-code" placeholder="Code reçu (ex. R102-K7QF)" style="max-width:220px"><button class="btn ghost" id="duel-join">Rejoindre</button></div></div>
-    <div class="stat wide"><span class="lbl">Proposer une carte</span>
-      <span class="info">Une question qui manque ? Propose-la : elle apparaîtra pour tout le monde une fois validée par Gaël.</span>
-      <div class="row"><select class="sel" id="prop-course" aria-label="Matière">${COURSES.map(c=>`<option value="${c.id}">${esc(c.code)} · ${esc(c.short)}</option>`).join('')}</select></div>
-      <input class="search" id="prop-q" placeholder="Question"><textarea id="prop-a" rows="2" placeholder="Réponse (comme dans le cours)"></textarea>
-      <div class="row"><button class="btn primary" id="prop-send">Proposer</button></div><div id="prop-msg"></div>
+    <div class="stat wide"><span class="lbl">Boîte à idées</span>
+      <span class="info">Une idée pour le site, un bug, une carte qui manque ? Écris-la ici, Gaël la reçoit directement sur le site.</span>
+      <div class="row ptypes" role="radiogroup">${IDEA_TYPES.map(([k,l],i)=>`<label class="chip"><input type="radio" name="prop-type" value="${k}" ${i===0?'checked':''}> ${l}</label>`).join('')}</div>
+      <div id="prop-idea"><textarea id="prop-text" rows="3" maxlength="800" placeholder="Ton idée, ou ce qui ne marche pas (sur quelle page, ce que tu as fait…)"></textarea></div>
+      <div id="prop-card" hidden><div class="row"><select class="sel" id="prop-course" aria-label="Matière">${COURSES.map(c=>`<option value="${c.id}">${esc(c.code)} · ${esc(c.short)}</option>`).join('')}</select></div>
+      <input class="search" id="prop-q" placeholder="Question"><textarea id="prop-a" rows="2" placeholder="Réponse (comme dans le cours)"></textarea></div>
+      <div class="row"><button class="btn primary" id="prop-send">Envoyer</button></div><div id="prop-msg"></div>
       ${social.isOwner?`<details class="pastebox"><summary>Coller une proposition reçue par message</summary><textarea id="prop-paste" rows="2" placeholder="Code PROP…"></textarea><button class="btn ghost" id="prop-import">Ajouter aux propositions</button><p class="hint" id="prop-pmsg"></p></details>`:''}</div>
     ${props}`;
 }
@@ -3450,14 +3459,23 @@ function bindSocial(){
   on('board-leave',()=>{ store.set('board-join',0); profChanged(); if(social.db&&social.uid) social.db.doc('board/'+social.uid).delete().catch(()=>{}); paintSocial(true); });
   on('duel-new',()=>{ const c=$('#duel-course').value; const code=c.toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(); startDuel(code); });
   on('duel-join',()=>{ const v=$('#duel-code').value.trim().toUpperCase(); if(/^R\d{3}-[A-Z0-9]{4}$/.test(v)) startDuel(v); else $('#duel-code').focus(); });
+  document.querySelectorAll('#social input[name=prop-type]').forEach(r=>r.onchange=()=>{ const c=r.value==='carte'; $('#prop-card').hidden=!c; $('#prop-idea').hidden=c; });
   on('prop-send', async()=>{
-    const it={course:$('#prop-course').value, q:$('#prop-q').value.trim().slice(0,300), a:$('#prop-a').value.trim().slice(0,600), by:pseudo()||'Anonyme', at:Date.now()};
-    const msg=$('#prop-msg'); if(!it.q||!it.a){ msg.innerHTML='<p class="hint">Remplis la question et la réponse.</p>'; return; }
-    if(social.isOwner){ await approve(it); msg.innerHTML='<p class="stamp ok">Carte ajoutée</p>'; return; }
-    if(social.db && social.uid && social.canWrite){
-      try{ const ref=social.db.doc('proposals/'+social.uid); const cur=(await ref.get()).data(); const items=[...((cur&&cur.items)||[]), it].slice(-20);
-        await ref.set({items}); msg.innerHTML='<p class="stamp ok">Proposition envoyée à Gaël</p>'; $('#prop-q').value=''; $('#prop-a').value=''; return; }catch(e){}
+    const type=(document.querySelector('#social input[name=prop-type]:checked')||{}).value||'idee';
+    const msg=$('#prop-msg'); let it;
+    if(type==='carte'){
+      it={type, course:$('#prop-course').value, q:$('#prop-q').value.trim().slice(0,300), a:$('#prop-a').value.trim().slice(0,600), by:pseudo()||'Anonyme', at:Date.now()};
+      if(!it.q||!it.a){ msg.innerHTML='<p class="hint">Remplis la question et la réponse.</p>'; return; }
+      if(social.isOwner){ await approve(it); msg.innerHTML='<p class="stamp ok">Carte ajoutée</p>'; return; }
+    } else {
+      it={type, text:$('#prop-text').value.trim().slice(0,800), page:location.hash.slice(1,40), by:pseudo()||'Anonyme', at:Date.now()};
+      if(!it.text){ msg.innerHTML='<p class="hint">Écris ton message.</p>'; return; }
     }
+    if(social.db && social.uid && social.canWrite){
+      try{ const ref=social.db.doc('proposals/'+social.uid); const cur=(await ref.get()).data(); const items=[...((cur&&cur.items)||[]), it].slice(-30);
+        await ref.set({items}); msg.innerHTML='<p class="stamp ok">Envoyé à Gaël, merci !</p>'; ['#prop-q','#prop-a','#prop-text'].forEach(x=>{ const e=$(x); if(e) e.value=''; }); return; }catch(e){}
+    }
+    if(type!=='carte'){ msg.innerHTML='<p class="hint">Envoi impossible pour l’instant (connexion). Réessaie plus tard.</p>'; return; }
     const code='PROP.'+b64(new TextEncoder().encode(JSON.stringify(it)));
     msg.innerHTML=`<p class="hint">Envoie ce code à Gaël par message, il l’ajoutera :</p><textarea rows="2" readonly id="prop-code"></textarea>`;
     $('#prop-code').value=code; try{ await navigator.clipboard.writeText(code); msg.insertAdjacentHTML('beforeend','<p class="stamp ok">Code copié</p>'); }catch(e){ $('#prop-code').select(); }
