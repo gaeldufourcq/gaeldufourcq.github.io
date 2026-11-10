@@ -755,6 +755,16 @@ html.th-grad .toast{background:linear-gradient(135deg,#5b3fd1,#e4572e);color:#ff
 #sqlexam{display:flex;flex-direction:column;gap:12px}
 details.schema summary{cursor:pointer;font-weight:600}
 details.schema h4{margin:10px 0 0;font-size:13px}
+.today .td-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.today .streak{flex:none;display:flex;flex-direction:column;align-items:center;min-width:92px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;text-align:center}
+.today .streak b{font-size:26px;line-height:1.1}.today .streak span{font-size:12px;color:var(--muted)}
+.duechips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.duechips a{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);font-size:13px;background:var(--surface)}
+.today .td-top>div:first-child{display:flex;flex-direction:column;gap:4px}
+.today .duechips a b{font-size:13px;font-weight:700;color:var(--cc);line-height:1.2}.duechips a span{color:var(--muted)}
+.duechips a.hot{border-color:var(--cc)}.duechips a.hot span{color:var(--ink);font-weight:600}
+@media(max-width:600px){.duechips{display:grid;grid-template-columns:1fr 1fr}.duechips a{justify-content:space-between;padding:6px 10px}.today .streak{min-width:74px}}
+.duechips a:hover{border-color:var(--cc);transform:translateY(-1px)}
 </style>
 
 <div class="wrap">
@@ -1276,9 +1286,11 @@ function renderHome(){
   const rowList=rows.split('<div class="hrow').slice(1).map(r=>'<div class="hrow'+r);
   const showAll=store.get('home-allexams',0);
   const express=`<div class="stat wide xgo"><div><span class="lbl">Révision express</span><span class="info">10 cartes urgentes, toutes matières confondues. Environ 5 minutes.</span></div><a class="btn primary" href="#express">Lancer</a></div>`;
-  const serie=`<div class="stat"><span class="lbl">Série</span><b>${st} jour${st>1?'s':''}</b><span class="info">${td.n?`Tu as révisé aujourd’hui : ${td.n} carte${td.n>1?'s':''}.`:st?'Révise aujourd’hui pour garder ta série.':'Révise une carte pour lancer ta série.'}</span></div>`;
-  const due=`<div class="stat"><span class="lbl">À revoir aujourd’hui</span><b>${dueTot} carte${dueTot>1?'s':''}</b>
-        <span class="info">${dueBy.map(x=>`<a href="#${x.c.id}-cartes" data-c="${x.c.id}" class="duego">${esc(x.c.code)} : ${x.due} à revoir, ${x.nw} nouvelles</a>`).join('<br>')}</span></div>`;
+  const serie='';
+  const due=`<div class="stat wide today"><div class="td-top"><div><span class="lbl">À revoir aujourd’hui</span><b>${dueTot?`${dueTot} carte${dueTot>1?'s':''}`:'Rien en retard'}</b>
+        <span class="info">${dueTot?'Des cartes déjà vues que le site te redonne pour ne pas les oublier.':'Toutes tes cartes déjà vues sont à jour. Tu peux en découvrir de nouvelles.'} Choisis une matière :</span></div>
+        <div class="streak" title="Jours d’affilée avec au moins une carte révisée"><b>${st}</b><span>jour${st>1?'s':''} de série</span><span>${td.n?`${td.n} carte${td.n>1?'s':''} aujourd’hui`:'rien aujourd’hui'}</span></div></div>
+        <div class="duechips">${dueBy.slice().sort((x,y)=>y.due-x.due).map(x=>`<a href="#${x.c.id}-cartes" data-c="${x.c.id}" class="duego${x.due?' hot':''}" style="--cc:${x.c.color||'var(--accent)'}"><b>${esc(x.c.code)}</b><span>${x.due?`${x.due} à revoir`:`${x.nw} nouvelle${x.nw>1?'s':''}`}</span></a>`).join('')}</div></div>`;
   const panes={
     apercu:`<div class="hfeat">
         <a class="hf hf-bilan" href="#bilan"><span class="hf-k">Nouveau</span><b>Ton bilan de la semaine</b><span>Tes chiffres de révision, façon story.</span></a>
