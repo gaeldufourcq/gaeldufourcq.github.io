@@ -18,6 +18,17 @@ service cloud.firestore {
         && request.resource.data.sues is int && request.resource.data.serie is int;
       allow delete: if isMe(uid) || isOwner();
     }
+    // Défi de la semaine par matière : tout le monde lit, chacun n'écrit que sa ligne
+    match /weekly/{uid} {
+      allow read: if true;
+      allow create, update: if isMe(uid)
+        && request.resource.data.keys().hasOnly(['pseudo','week','c','at'])
+        && request.resource.data.pseudo is string && request.resource.data.pseudo.size() <= 20
+        && request.resource.data.week is string && request.resource.data.week.size() == 10
+        && request.resource.data.c is map && request.resource.data.c.size() <= 30
+        && request.resource.data.at is int;
+      allow delete: if isMe(uid) || isOwner();
+    }
     // Cartes validées : tout le monde lit, seul Gaël écrit
     match /cards/{id} {
       allow read: if true;
