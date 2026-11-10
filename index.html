@@ -2843,7 +2843,7 @@ async function renderSql(){
   if(!sqlOrder.length) sqlOrder=ex.map((_,i)=>i);
   el.innerHTML='<p class="hint">Chargement du moteur SQL…</p>';
   try{ await loadSql(); }
-  catch(e){ el.innerHTML='<article class="sheet"><div class="empty">Le moteur SQL n’a pas pu se charger (connexion lente, ou page ouverte dans Claude qui bloque ce téléchargement). Recharge la page, ou ouvre revisions-but1.netlify.app.</div></article>'; return; }
+  catch(e){ el.innerHTML='<article class="sheet"><div class="empty">Le moteur SQL n’a pas pu se charger (connexion lente, ou page ouverte dans Claude qui bloque ce téléchargement). Recharge la page, ou ouvre gaeldufourcq.github.io.</div></article>'; return; }
   const hasExam=ex.some(x=>x.lv);
   const run=store.get('sqlexam-cur-'+C.id,null);
   if(run && !run.done && sqlMode!=='exam') sqlMode='exam';

@@ -2,7 +2,7 @@
 
 Site de révision des cours de BUT1 Informatique (IUT de Bayonne et du Pays Basque) : cartes flash avec répétition espacée, QCM, fiches, calculs, contrôles blancs, révision express, classement et duels entre potes.
 
-- Hébergement : GitHub Pages (`index.html`)
+- Hébergement : GitHub Pages, https://gaeldufourcq.github.io (`index.html`, appli installable : `manifest.webmanifest`, `sw.js`)
 - Données partagées (classement, duels, cartes proposées, progression) : Firebase (Firestore + Authentication)
 - Règles de sécurité Firestore : `firestore.rules`
 
