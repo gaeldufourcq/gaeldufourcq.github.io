@@ -493,6 +493,17 @@ html.th-grad .th-fab{background:#1a1640;border-color:rgba(143,124,255,.45);color
 .th-menu button:hover,.th-menu button[aria-checked=true]{background:var(--line)}
 html.th-grad .th-menu{background:#15122f;border-color:rgba(143,124,255,.35)}
 body:has(#v-bilan:not([hidden])) .th-fab,body:has(#gsearch:not([hidden])) .th-fab{display:none}
+.hwform{display:flex;flex-direction:column;gap:8px}
+.hwform textarea,.hwform .search{width:100%;box-sizing:border-box}
+.hwgoals{list-style:none;margin:6px 0 4px;padding:0;display:flex;flex-direction:column;gap:4px}
+.hwgoals label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.hwgoals input{margin-top:3px;accent-color:var(--accent)}
+.hwgoals input:checked+span{text-decoration:line-through;color:var(--muted)}
+.hrow.hw.late .hrel b{color:var(--ko)}
+.hrow.hwexam{opacity:.95}
+.hwdone{margin-top:12px}.hwdone summary{cursor:pointer;color:var(--muted);font-weight:600}
+.hwdone ul{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.hwdone li{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--muted)}
 .gs-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:54px;height:54px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:26px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .gs-fab:hover{transform:scale(1.06)}
 /* barre d'outils de l'accueil : trois contrôles identiques */
@@ -1061,6 +1072,63 @@ function weakSpots(){
     const k=c.id+'|'+q.s+'|'+q.sec; const e=m.get(k)||{c, s:q.s, sec:q.sec, n:0}; e.n++; m.set(k,e); }
   return [...m.values()].sort((a,b)=>b.n-a.n).slice(0,5);
 }
+
+/* ---------- devoirs : objectifs de TP et travail à rendre (chacun les siens) + contrôles ---------- */
+function hwList(){ const l=store.get('hw',[]); return Array.isArray(l)?l:[]; }
+function hwSave(l){ store.set('hw',l); ts.hw=Date.now(); store.set('ts',ts); if(window.queueSync) queueSync(); }
+function endOfWeek(){ const d=new Date(); const add=(5-d.getDay()+7)%7; d.setDate(d.getDate()+add); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+let hwEdit=null;
+function hwHTML(items){
+  const now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const days=d=>Math.round((new Date(d+'T00:00')-today)/864e5);
+  const rel=d=>{ const n=days(d); return n<0?`en retard de ${-n} jour${n<-1?'s':''}`:n===0?'aujourd’hui':n===1?'demain':`dans ${n} jours`; };
+  const dayBox=d=>{ const x=new Date(d+'T00:00'); return `<div class="hday"><span>${esc(x.toLocaleDateString('fr-FR',{weekday:'short'}).replace('.',''))}</span><b>${x.getDate()}</b><span>${esc(x.toLocaleDateString('fr-FR',{month:'short'}).replace('.',''))}</span></div>`; };
+  const L=hwList(), open=L.filter(h=>!h.done), done=L.filter(h=>h.done);
+  const cname=id=>{ const c=COURSES.find(x=>x.id===id); return c?c.code:(id||'Autre'); };
+  const ed=hwEdit?L.find(h=>h.id===hwEdit):null;
+  const form=`<div class="stat wide hwform"><span class="lbl">${ed?'Modifier le devoir':'Ajouter un devoir'}</span>
+    <div class="row"><select class="sel" id="hw-c" aria-label="Matière">${COURSES.map(c=>`<option value="${c.id}" ${ed&&ed.course===c.id?'selected':''}>${esc(c.code)} · ${esc(c.short)}</option>`).join('')}<option value="" ${ed&&!ed.course?'selected':''}>Autre</option></select>
+      <label class="grpsel">Pour le <input type="date" class="sel" id="hw-d" value="${esc(ed?ed.due:endOfWeek())}"></label></div>
+    <input class="search" id="hw-t" maxlength="80" placeholder="Intitulé (ex. TP3 : objectifs de fin de séance)" value="${esc(ed?ed.title:'')}">
+    <textarea id="hw-g" rows="3" placeholder="Objectifs, un par ligne (ex. Finir l'exercice 4, Rendre le .cpp sur Elearn)">${esc(ed?ed.goals.map(g=>g.t).join('\n'):'')}</textarea>
+    <div class="row"><button class="btn primary" id="hw-add">${ed?'Enregistrer':'Ajouter'}</button>${ed?'<button class="btn ghost" id="hw-cancel">Annuler</button>':''}<span class="hint" id="hw-msg"></span></div></div>`;
+  const ev=[...open.map(h=>({d:h.due+' 23:59', h})), ...items.map(it=>({d:it.e.date+' '+(it.e.time||'00:00'), x:it}))].sort((a,b)=>a.d.localeCompare(b.d));
+  const card=h=>{ const n=h.goals.length, k=h.goals.filter(g=>g.done).length, late=days(h.due)<0;
+    return `<div class="hrow hw${late?' late':''}">${dayBox(h.due)}
+      <div class="hmain"><span class="code">${esc(cname(h.course))} · devoir</span><span class="nm">${esc(h.title||'Devoir')}</span>
+        ${n?`<ul class="hwgoals">${h.goals.map((g,i)=>`<li><label><input type="checkbox" data-hw="${h.id}" data-g="${i}" ${g.done?'checked':''}><span>${esc(g.t)}</span></label></li>`).join('')}</ul>`:''}
+        <span class="row"><button class="btn ok small" data-hwdone="${h.id}">C’est fait</button><button class="linkbtn small" data-hwedit="${h.id}">Modifier</button><button class="linkbtn small" data-hwdel="${h.id}">Supprimer</button></span></div>
+      <div class="hrel"><b>${esc(rel(h.due).replace(/^./,c=>c.toUpperCase()))}</b>${n?`<span class="left">${k}/${n} objectif${n>1?'s':''}</span>`:''}</div></div>`; };
+  const exam=({c,e,code,name})=>`<div class="hrow hwexam">${dayBox(e.date)}
+      <div class="hmain"><span class="code">${esc(code)} · ${esc(e.kind||'contrôle')}</span><span class="nm">${esc(name)}</span><span class="when">${e.time?esc(e.time.replace(':','h')+(e.end?' – '+e.end.replace(':','h'):'')):''}</span>
+      ${c&&c.qa.length?`<span><button class="btn ghost hrev" data-c="${c.id}">Réviser pour ce contrôle</button></span>`:''}</div>
+      <div class="hrel"><b>${esc(relDays(e).replace(/^./,c=>c.toUpperCase()))}</b></div></div>`;
+  return `${form}
+    <h2 class="hh">À faire</h2>
+    <div class="hlist">${ev.map(x=>x.h?card(x.h):exam(x.x)).join('')||'<div class="empty">Rien à faire pour l’instant.</div>'}</div>
+    ${done.length?`<details class="hwdone"><summary>Faits (${done.length})</summary><ul>${done.map(h=>`<li><span><span class="code">${esc(cname(h.course))}</span> ${esc(h.title||'Devoir')}</span><span class="row"><button class="linkbtn small" data-hwundo="${h.id}">Remettre à faire</button><button class="linkbtn small" data-hwdel="${h.id}">Supprimer</button></span></li>`).join('')}</ul></details>`:''}
+    <p class="hint">Tes devoirs restent sur ton appareil, et sur tous tes appareils si tu es connecté avec Google. Les contrôles s’ajoutent tout seuls.</p>`;
+}
+function bindHW(){
+  const root=$('#v-home'); if(!root.querySelector('#hw-add')) return;
+  const upd=f=>{ const L=hwList(); f(L); hwSave(L); renderHome(); };
+  $('#hw-add').onclick=()=>{
+    const title=$('#hw-t').value.trim(), due=$('#hw-d').value, goals=$('#hw-g').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,15);
+    if(!title && !goals.length){ $('#hw-msg').textContent='Écris au moins un intitulé ou un objectif.'; return; }
+    if(!due){ $('#hw-msg').textContent='Choisis une date.'; return; }
+    upd(L=>{ const old=hwEdit&&L.find(h=>h.id===hwEdit);
+      if(old){ const was=new Map(old.goals.map(g=>[g.t,g.done])); Object.assign(old,{course:$('#hw-c').value, title:title.slice(0,80), due, goals:goals.map(t=>({t:t.slice(0,120), done:!!was.get(t)}))}); }
+      else L.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), course:$('#hw-c').value, title:title.slice(0,80), due, goals:goals.map(t=>({t:t.slice(0,120),done:false})), done:false, at:Date.now()}); });
+    hwEdit=null;
+  };
+  const cancel=$('#hw-cancel'); if(cancel) cancel.onclick=()=>{ hwEdit=null; renderHome(); };
+  root.querySelectorAll('[data-hw]').forEach(b=>b.onchange=()=>{ const L=hwList(); const h=L.find(x=>x.id===b.dataset.hw); if(!h) return; h.goals[+b.dataset.g].done=b.checked;
+    if(h.goals.length && h.goals.every(g=>g.done)){ h.done=true; hwSave(L); if(window.toast) toast('Devoir terminé, bravo !'); renderHome(); } else { hwSave(L); renderHome(); } });
+  root.querySelectorAll('[data-hwdone]').forEach(b=>b.onclick=()=>{ upd(L=>{ const h=L.find(x=>x.id===b.dataset.hwdone); if(h){ h.done=true; h.goals.forEach(g=>g.done=true); } }); if(window.toast) toast('Devoir terminé, bravo !'); });
+  root.querySelectorAll('[data-hwundo]').forEach(b=>b.onclick=()=>upd(L=>{ const h=L.find(x=>x.id===b.dataset.hwundo); if(h) h.done=false; }));
+  root.querySelectorAll('[data-hwdel]').forEach(b=>b.onclick=()=>upd(L=>{ const i=L.findIndex(x=>x.id===b.dataset.hwdel); if(i>=0) L.splice(i,1); }));
+  root.querySelectorAll('[data-hwedit]').forEach(b=>b.onclick=()=>{ hwEdit=b.dataset.hwedit; renderHome(); const t=$('#hw-t'); if(t){ t.scrollIntoView({block:'center'}); t.focus(); } });
+}
 function renderHome(){
   const cap=s=>s.replace(/(^|\s)(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
   const now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
@@ -1096,7 +1164,8 @@ function renderHome(){
       ${c.qa.length?`<div class="bar"><i style="width:${ok/c.qa.length*100}%"></i></div>`:''}
       <span class="info">${nx?`Prochain contrôle ${relDays(nx)}`:'Pas de contrôle prévu'}</span></a>`;
   }).join('');
-  const HT=[['apercu','Aperçu'],['revision','Ma révision'],['potes','Entre potes'],['donnees','Mes données']];
+  const hwOpen=hwList().filter(h=>!h.done).length;
+  const HT=[['apercu','Aperçu'],['devoirs','Devoirs'+(hwOpen?` (${hwOpen})`:'')],['revision','Ma révision'],['potes','Entre potes'],['donnees','Mes données']];
   let tab=store.get('home-tab','apercu'); if(!HT.some(x=>x[0]===tab)) tab='apercu';
   const rowList=rows.split('<div class="hrow').slice(1).map(r=>'<div class="hrow'+r);
   const showAll=store.get('home-allexams',0);
@@ -1129,6 +1198,7 @@ function renderHome(){
       ${planHTML()}
       ${badgesHTML()}
     </div>`,
+    devoirs: hwHTML(items),
     potes: socialHTML().replace('<h2 class="hh">Entre potes</h2>',''),
     donnees:`<div class="stats">${progressHTML()}<div class="stat wide" id="import"></div></div>`
   };
@@ -1138,7 +1208,7 @@ function renderHome(){
     <div class="hpane">${panes[tab]}</div>`;
   $('#v-home').querySelectorAll('.htabs a').forEach(a=>a.onclick=e=>{ e.preventDefault(); store.set('home-tab',a.dataset.t); renderHome(); });
   const ae=$('#all-exams'); if(ae) ae.onclick=()=>{ store.set('home-allexams', showAll?0:1); renderHome(); };
-  bindGroupPicker($('#v-home')); bindGuide(); bindProgress(); bindSocial(); bindPlan();
+  bindGroupPicker($('#v-home')); bindHW(); bindGuide(); bindProgress(); bindSocial(); bindPlan();
   const ts_=$('#theme-sel'); if(ts_){ ts_.value=store.get('theme','original'); ts_.onchange=()=>{ store.set('theme',ts_.value); applyTheme(); renderHome(); }; }
   renderImport();
   $('#v-home').querySelectorAll('.hrev').forEach(b=>b.onclick=()=>goCourse(b.dataset.c,{mode:'exam'}));
@@ -3266,12 +3336,13 @@ function paintSync(){ const el=$('#sync'); if(el) el.textContent=syncLabel(); }
 // Les anciennes données n'avaient pas d'horodatage : on leur en donne un minimal.
 for(const k of Object.keys(status)) if(!ts[k]) ts[k]=1;
 for(const g of Object.keys(calcStats)) if(!ts['calc:'+g]) ts['calc:'+g]=1;
-function snapshot(){ return {v:1, status, srs, calc:calcStats, ts, log:dlog, pnotes, custom, prof:{pseudo:pseudo(), join:store.get('board-join',0)?1:0}, at:Date.now()}; }
+function snapshot(){ return {v:1, status, srs, calc:calcStats, ts, log:dlog, pnotes, custom, hw:hwList(), prof:{pseudo:pseudo(), join:store.get('board-join',0)?1:0}, at:Date.now()}; }
 function mergeRemote(r){
   if(!r || !r.ts) return false; let changed=false;
   for(const [k,t] of Object.entries(r.ts)){
     if((t||0) <= (ts[k]||0)) continue;
     changed=true; ts[k]=t;
+    if(k==='hw'){ store.set('hw', Array.isArray(r.hw)?r.hw:[]); continue; }
     if(k==='prof'){ if(r.prof){ store.set('pseudo',String(r.prof.pseudo||'').slice(0,20)); store.set('board-join',r.prof.join?1:0); } if(window.paintSocial) paintSocial(true); continue; }
     if(k==='custom'){ custom=Array.isArray(r.custom)?r.custom:[]; store.set('custom',custom); integrateCustom(); if(route.done) setupCourse(); continue; }
     if(k.startsWith('note:')){ const id=k.slice(5); if(r.pnotes && r.pnotes[id]) pnotes[id]=r.pnotes[id]; else delete pnotes[id]; store.set('pnotes',pnotes); continue; }
