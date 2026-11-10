@@ -472,6 +472,27 @@ code.bits{font:600 .95em var(--f-mono);letter-spacing:.04em;background:var(--tin
 .gs-sub{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gs-it mark{background:rgba(255,200,0,.35);color:inherit;border-radius:2px}
 .gs-hint{color:var(--muted);padding:14px;margin:0}
+.btn.mid{background:#E9A23B;border-color:#E9A23B;color:#1b1300}
+html.th-grad .btn.mid{background:linear-gradient(135deg,#f0b34a,#e8803a);border:none;color:#1b1300}
+.stamp.ko.mid{}
+html.fc-on,html.fc-on body{overflow:hidden}
+html.fc-on #card{position:fixed;inset:0;z-index:300;border:none;border-radius:0;overflow:auto;display:flex;flex-direction:column;justify-content:center;padding:max(56px,6vh) 16px 32px;animation:fcZoom .35s cubic-bezier(.2,.8,.2,1)}
+html.fc-on #card>*{width:100%;max-width:880px;margin-left:auto;margin-right:auto}
+html.fc-on #card .sheet-head{border:none;background:transparent}
+html.fc-on #card .sheet-body{font-size:1.28em}
+html.fc-on #card .sheet-body .q{font-size:1.25em;line-height:1.35}
+html.fc-on .gs-fab,html.fc-on .th-fab,html.fc-on .fw{display:none!important}
+html.th-grad.fc-on #card{background:radial-gradient(1200px 700px at 20% 0%,#2a1f5e 0%,#0c0f24 60%)}
+@keyframes fcZoom{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.fc-exit{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:14px;z-index:301;display:none}
+html.fc-on .fc-exit{display:inline-flex}
+.th-fab{position:fixed;right:24px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:50;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
+html.th-grad .th-fab{background:#1a1640;border-color:rgba(143,124,255,.45);color:#fff}
+.th-menu{position:fixed;right:24px;bottom:calc(134px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.22);min-width:170px}
+.th-menu button{all:unset;cursor:pointer;padding:9px 12px;border-radius:7px;color:var(--ink);font-size:14px}
+.th-menu button:hover,.th-menu button[aria-checked=true]{background:var(--line)}
+html.th-grad .th-menu{background:#15122f;border-color:rgba(143,124,255,.35)}
+body:has(#v-bilan:not([hidden])) .th-fab,body:has(#gsearch:not([hidden])) .th-fab{display:none}
 .gs-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:54px;height:54px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:26px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .gs-fab:hover{transform:scale(1.06)}
 /* barre d'outils de l'accueil : trois contrôles identiques */
@@ -701,6 +722,7 @@ details.schema h4{margin:10px 0 0;font-size:13px}
         <option value="qcm">QCM</option>
       </select>
       <button class="chip" id="reshuffle">Mélanger</button>
+      <button class="chip" id="fc-focus" title="Plein écran, rien d'autre que la carte (Échap pour sortir)">Mode focus</button>
     </div>
     <article class="sheet" id="card"></article>
   </section>
@@ -878,7 +900,7 @@ for(const c of COURSES){
   const open=new Set(c.groups.filter(g=>g.open!==false).map(g=>g.n));
   c.groups=c.groups.filter(g=>open.has(g.n));
   c.qa=c.qa.filter(q=>open.has(q.s)).map(q=>({...q, id:(c.id==='r108'?'':c.id+'-')+'s'+q.s+'-'+hash(q.q)}));
-  c.fSynth=new Set(store.get('fSynth2-'+c.id, c.groups.map(g=>g.n)).filter(x=>open.has(x)));
+  c.fSynth=new Set(store.get('fSynth2-'+c.id, c.groups.filter(g=>!g.bonus).map(g=>g.n)).filter(x=>open.has(x)));
   if(!c.fSynth.size) c.fSynth=new Set(open);
   c.cSynth=new Set(c.groups.filter(g=>!g.bonus).map(g=>g.n));
   c.nextExams=EXAMS.filter(e=>e.code===c.code);
@@ -896,8 +918,11 @@ function logReview(ok){ const d=dstr(), L=dlog[d]||{n:0,ok:0}; L.n++; if(ok) L.o
 function saveAll(){ store.set('status',status); store.set('calcstats',calcStats); store.set('srs',srs); store.set('ts',ts); store.set('log',dlog); if(window.queueSync) queueSync(); queuePresence(); }
 function recordCalc(gid, ok){ const s=calcStats[gid]||{ok:0,n:0}; s.n++; if(ok) s.ok++; s.last=ok?'ok':'ko'; calcStats[gid]=s; ts['calc:'+gid]=Date.now(); logReview(ok); logCourse((GENS.find(g=>g.id===gid)||{}).c||'r108'); saveAll(); renderProgress(); if(C.calc) renderCalcList(); }
 function setStatus(id, v){
+  const mid = v==='mid'; if(mid) v='ko';
   status[id]=v; const s=srs[id]||{b:0};
-  s.b = v==='ok' ? Math.min((s.b||0)+1,5) : 0; s.due=dstr(IV[s.b]); srs[id]=s;
+  if(mid){ s.b=Math.max((s.b||0)-1,1); s.due=dstr(1); s.mid=1; }   // à peu près : revient demain, sans repartir de zéro
+  else { s.b = v==='ok' ? Math.min((s.b||0)+1,5) : 0; s.due=dstr(IV[s.b]); delete s.mid; }
+  srs[id]=s;
   ts[id]=Date.now(); logReview(v==='ok'); logCourse(courseOfId(id)); saveAll(); renderProgress(); celebrateAfter(id,v); queueTraps();
 }
 const isDue = q => !srs[q.id] || srs[q.id].due<=dstr();
@@ -1301,7 +1326,7 @@ function renderCard(){
   const qcm = $('#f-ans').value==='qcm' && !q.strike && C.qa.length>=4;
   const box = srs[q.id] ? `<span class="stamp box" title="Plus la boîte est haute, plus la carte revient tard">boîte ${srs[q.id].b}/5</span>` : '<span class="stamp box">nouvelle</span>';
   el.innerHTML=`
-    <div class="sheet-head"><span>${esc(g.title)} · ${esc(q.sec)}</span><span class="deckinfo">${pos+1} / ${deck.length} · ${box}${st?` <span class="stamp ${st}">${st==='ok'?'su':'à revoir'}</span>`:''}</span></div>
+    <div class="sheet-head"><span>${esc(g.title)} · ${esc(q.sec)}</span><span class="deckinfo">${pos+1} / ${deck.length} · ${box}${st?` <span class="stamp ${st}">${st==='ok'?'su':(srs[q.id]&&srs[q.id].mid?'à peu près':'à revoir')}</span>`:''}</span></div>
     <div class="sheet-body">
       ${q.obj?`<div class="obj">${esc(q.obj)}</div>`:''}
       ${qHTML(q)}
@@ -1331,10 +1356,10 @@ function renderCard(){
   if(revealed) reveal();
   function showBtns(){
     $('#card-btns').innerHTML = revealed
-      ? `<button class="btn ok" id="b-ok">Je savais<kbd>1</kbd></button><button class="btn ko" id="b-ko">À revoir<kbd>2</kbd></button><button class="btn ghost" id="b-prev" ${pos?'':'disabled'}>Précédente</button>`
+      ? `<button class="btn ok" id="b-ok">Je savais<kbd>1</kbd></button><button class="btn mid" id="b-mid">À peu près<kbd>2</kbd></button><button class="btn ko" id="b-ko">À revoir<kbd>3</kbd></button><button class="btn ghost" id="b-prev" ${pos?'':'disabled'}>Précédente</button>`
       : `<button class="btn primary" id="b-show">Voir la réponse<kbd>Espace</kbd></button><button class="btn ghost" id="b-skip">Passer</button><button class="btn ghost" id="b-prev" ${pos?'':'disabled'}>Précédente</button>${canSpeak()?'<button class="btn ghost" id="b-say">Écouter</button>':''}`;
     const say=$('#b-say'); if(say) say.onclick=()=>speak(q.q);
-    if(revealed){ $('#b-ok').onclick=()=>grade('ok'); $('#b-ko').onclick=()=>grade('ko'); }
+    if(revealed){ $('#b-ok').onclick=()=>grade('ok'); $('#b-mid').onclick=()=>grade('mid'); $('#b-ko').onclick=()=>grade('ko'); }
     else { $('#b-show').onclick=()=>{revealed=true;reveal();}; $('#b-skip').onclick=()=>{pos++;revealed=false;renderCard();}; }
     $('#b-prev').onclick=()=>{ if(pos){pos--;revealed=false;renderCard();} };
   }
@@ -1342,7 +1367,8 @@ function renderCard(){
   el.keyHandler=e=>{
     if(e.key===' ' && !revealed){ revealed=true; reveal(); return true; }
     if(revealed && e.key==='1'){ grade('ok'); return true; }
-    if(revealed && e.key==='2'){ grade('ko'); return true; }
+    if(revealed && e.key==='2'){ grade('mid'); return true; }
+    if(revealed && e.key==='3'){ grade('ko'); return true; }
     return false;
   };
 }
@@ -2709,7 +2735,7 @@ function guideHTML(){
   return `<div class="guide" id="guide"><div class="ghead"><span class="lbl">Bienvenue · comment ça marche</span><button class="linkbtn small" id="guide-close">J’ai compris</button></div>
     <ol>
       <li><b>Choisis ton groupe</b> juste en dessous : les horaires de TD/TP dépendent du groupe.</li>
-      <li><b>Cartes flash :</b> en mode « À réviser aujourd’hui », chaque carte est dans une boîte de 0 à 5. « Je savais » la fait monter et elle revient plus tard (1, 2, 4, 8 puis 16 jours), « À revoir » la fait revenir aujourd’hui.</li>
+      <li><b>Cartes flash :</b> en mode « À réviser aujourd’hui », chaque carte est dans une boîte de 0 à 5. « Je savais » la fait monter et elle revient plus tard (1, 2, 4, 8 puis 16 jours), « À peu près » la fait revenir demain, « À revoir » la fait revenir aujourd’hui.</li>
       <li><b>QCM :</b> dans les cartes, choisis « QCM » à la place de « Retourner la carte ».</li>
       <li><b>Avant un contrôle :</b> clique sur « Réviser pour ce contrôle », ou fais un mini-contrôle ou un contrôle blanc dans la matière.</li>
       <li><b>Pressé ?</b> « Révision express » te donne 10 cartes urgentes en 5 minutes.</li>
@@ -2771,7 +2797,7 @@ let social={db:null, user:null, room:null, uid:null, canWrite:false, isOwner:fal
 const pseudo = () => store.get('pseudo','');
 function myStats(){
   const sues=COURSES.reduce((a,c)=>a+c.qa.filter(q=>!q.custom && status[q.id]==='ok').length,0);
-  return {pseudo:pseudo()||'Anonyme', sues, serie:streak(), today:(dlog[dstr()]||{n:0}).n};
+  return {pseudo:pseudo(), sues, serie:streak(), today:(dlog[dstr()]||{n:0}).n};
 }
 async function initSocial(){
   if(!window.claude || !window.claude.use) { social.ready=true; return; }
@@ -2779,7 +2805,11 @@ async function initSocial(){
   Object.assign(social,{db,user,room});
   if(user){ social.isOwner=await user.isOwner(); social.uid=await user.id(); social.canWrite=(await user.can('data.write'))!==false; }
   if(db){
-    db.collection('board').onSnapshot(s=>{ social.board=s.docs.map(d=>({id:d.id,...d.data()})); paintSocial(); }, ()=>{});
+    db.collection('board').onSnapshot(s=>{ social.board=s.docs.map(d=>({id:d.id,...d.data()}));
+      const mine=social.board.find(r=>r.id===social.uid);
+      if(mine && (!pseudo() || !store.get('board-join',0))){ if(!pseudo() && mine.pseudo) store.set('pseudo',String(mine.pseudo)); store.set('board-join',1); paintSocial(true); }
+      if(social.isOwner) cleanBoard();
+      paintSocial(); }, ()=>{});
     db.collection('cards').onSnapshot(s=>{ social.approved=s.docs.map(d=>({id:d.id,...d.data()})); integrateApproved(); }, ()=>{});
     if(social.isOwner) db.collection('proposals').onSnapshot(s=>{ social.proposals=s.docs.map(d=>({id:d.id,...d.data()})); paintSocial(true); }, ()=>{});
   }
@@ -2825,13 +2855,25 @@ function onlineHTML(){
   return peers.length ? `<ul class="plist">${peers.map(p=>`<li><span>${esc(String(p.presence.pseudo))}${p.isMe?' <span class="hint">(toi)</span>':''}</span><span class="hint">${esc(String(p.presence.where||''))} · ${+p.presence.sues||0} sues · série ${+p.presence.serie||0}</span></li>`).join('')}</ul>`
     : `<span class="info">${social.room?'Personne d’autre pour l’instant.':'Visible seulement pour les personnes connectées et invitées au site.'}</span>`;
 }
+const pkey=s=>String(s||'').trim().toLowerCase();
+function boardRows(){
+  const by=new Map();
+  for(const r of social.board){ const k=pkey(r.pseudo); if(!k || k==='anonyme') continue; const o=by.get(k);
+    if(!o || r.id===social.uid || (o.id!==social.uid && (+r.at||0)>(+o.at||0))) by.set(k,r); }
+  return [...by.values()];
+}
+/* Gaël nettoie les doublons (même pseudo sur plusieurs appareils) et les lignes sans pseudo */
+function cleanBoard(){
+  if(!social.db || !social.isOwner) return; const keep=new Set(boardRows().map(r=>r.id));
+  for(const r of social.board) if(!keep.has(r.id) && r.id!==social.uid) social.db.doc('board/'+r.id).delete().catch(()=>{});
+}
 function boardHTML(){
-  const board=[...social.board].sort((a,b)=>(b.sues||0)-(a.sues||0)||(b.serie||0)-(a.serie||0)).slice(0,15);
+  const board=[...boardRows()].sort((a,b)=>(b.sues||0)-(a.sues||0)||(b.serie||0)-(a.serie||0)).slice(0,15);
   return board.length ? `<ol class="board">${board.map((r,i)=>`<li class="${r.id===social.uid?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(String(r.pseudo||'Anonyme'))}</span><span class="hint">${+r.sues||0} sues · série ${+r.serie||0}${r.at?' · '+ago(+r.at):''}</span></li>`).join('')}</ol>` : '<span class="info">Personne dans le classement pour l’instant.</span>';
 }
 function socialInner(){
   const me=myStats();
-  const joined=store.get('board-join',0);
+  const joined=store.get('board-join',0) || social.board.some(r=>r.id===social.uid);
   const canJoin = social.db && social.uid && social.canWrite;
   const props = social.isOwner && social.proposals.length ? `<div class="stat wide"><span class="lbl">Cartes proposées · à valider</span><ul class="props">${social.proposals.flatMap(d=>(d.items||[]).map((it,j)=>`<li><span><span class="code">${esc((COURSES.find(c=>c.id===it.course)||{}).code||'?')}</span> <b>${esc(it.q)}</b><br><span class="hint">${esc(it.a)} · par ${esc(it.by||'?')}</span></span><span class="row"><button class="btn ok small" data-ok="${esc(d.id)}|${j}">Valider</button><button class="btn ko small" data-no="${esc(d.id)}|${j}">Refuser</button></span></li>`)).join('')}</ul></div>` : '';
   return `
@@ -2863,9 +2905,10 @@ function paintSocial(full){
 }
 function bindSocial(){
   const on=(id,f)=>{ const b=$('#'+id); if(b) b.onclick=f; };
-  on('pseudo-save',()=>{ store.set('pseudo',$('#pseudo-in').value.trim().slice(0,20)); pushPresence(); paintSocial(true); });
-  on('board-join',()=>{ store.set('board-join',1); pushPresence(); paintSocial(true); });
-  on('board-leave',()=>{ store.set('board-join',0); if(social.db&&social.uid) social.db.doc('board/'+social.uid).delete().catch(()=>{}); paintSocial(true); });
+  const profChanged=()=>{ ts.prof=Date.now(); store.set('ts',ts); if(window.queueSync) queueSync(); };
+  on('pseudo-save',()=>{ store.set('pseudo',$('#pseudo-in').value.trim().slice(0,20)); profChanged(); pushPresence.last=null; pushPresence(); paintSocial(true); });
+  on('board-join',()=>{ if(store.get('board-join',0)) return; store.set('board-join',1); profChanged(); pushPresence.last=null; pushPresence(); paintSocial(true); });
+  on('board-leave',()=>{ store.set('board-join',0); profChanged(); if(social.db&&social.uid) social.db.doc('board/'+social.uid).delete().catch(()=>{}); paintSocial(true); });
   on('duel-new',()=>{ const c=$('#duel-course').value; const code=c.toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(); startDuel(code); });
   on('duel-join',()=>{ const v=$('#duel-code').value.trim().toUpperCase(); if(/^R\d{3}-[A-Z0-9]{4}$/.test(v)) startDuel(v); else $('#duel-code').focus(); });
   on('prop-send', async()=>{
@@ -3223,12 +3266,13 @@ function paintSync(){ const el=$('#sync'); if(el) el.textContent=syncLabel(); }
 // Les anciennes données n'avaient pas d'horodatage : on leur en donne un minimal.
 for(const k of Object.keys(status)) if(!ts[k]) ts[k]=1;
 for(const g of Object.keys(calcStats)) if(!ts['calc:'+g]) ts['calc:'+g]=1;
-function snapshot(){ return {v:1, status, srs, calc:calcStats, ts, log:dlog, pnotes, custom, at:Date.now()}; }
+function snapshot(){ return {v:1, status, srs, calc:calcStats, ts, log:dlog, pnotes, custom, prof:{pseudo:pseudo(), join:store.get('board-join',0)?1:0}, at:Date.now()}; }
 function mergeRemote(r){
   if(!r || !r.ts) return false; let changed=false;
   for(const [k,t] of Object.entries(r.ts)){
     if((t||0) <= (ts[k]||0)) continue;
     changed=true; ts[k]=t;
+    if(k==='prof'){ if(r.prof){ store.set('pseudo',String(r.prof.pseudo||'').slice(0,20)); store.set('board-join',r.prof.join?1:0); } if(window.paintSocial) paintSocial(true); continue; }
     if(k==='custom'){ custom=Array.isArray(r.custom)?r.custom:[]; store.set('custom',custom); integrateCustom(); if(route.done) setupCourse(); continue; }
     if(k.startsWith('note:')){ const id=k.slice(5); if(r.pnotes && r.pnotes[id]) pnotes[id]=r.pnotes[id]; else delete pnotes[id]; store.set('pnotes',pnotes); continue; }
     if(k.startsWith('calc:')){ const g=k.slice(5); if(r.calc && r.calc[g]) calcStats[g]=r.calc[g]; else delete calcStats[g]; }
@@ -3281,6 +3325,26 @@ $('#courses').innerHTML=`<button class="course home" data-c="accueil"><span>Accu
 document.querySelectorAll('.course').forEach(b=>b.onclick=()=>{ if(b.dataset.c==='accueil') location.hash='accueil'; else goCourse(b.dataset.c); });
 document.body.insertAdjacentHTML('beforeend','<button class="gs-fab" id="gs-fab" aria-label="Chercher dans tous les cours (Ctrl+K)" title="Chercher partout (Ctrl+K)">⌕</button>'); $('#gs-fab').onclick=openSearch;
 $('#f-sec').onchange=buildDeck; $('#f-mode').onchange=buildDeck; $('#f-ans').onchange=()=>{ store.set('ans',$('#f-ans').value); renderCard(); }; $('#f-ans').value=store.get('ans','flip'); $('#n-search').oninput=renderNotes; $('#reshuffle').onclick=buildDeck;
+
+/* mode focus des cartes flash */
+function setFocus(on){
+  document.documentElement.classList.toggle('fc-on', !!on);
+  if(on && !$('#fc-exit')) document.body.insertAdjacentHTML('beforeend','<button class="btn ghost fc-exit" id="fc-exit">Quitter le focus <kbd>Échap</kbd></button>');
+  const x=$('#fc-exit'); if(x) x.onclick=()=>setFocus(false);
+}
+$('#fc-focus').onclick=()=>setFocus(true);
+addEventListener('keydown',e=>{ if(e.key==='Escape' && document.documentElement.classList.contains('fc-on')) setFocus(false); });
+addEventListener('hashchange',()=>{ if($('#v-cartes').hidden || $('#coursewrap').hidden) setFocus(false); });
+/* thème accessible depuis toutes les pages */
+const THEMES=[['original','Original'],['sobre','Sobre (sombre)'],['grad','Dégradé']];
+document.body.insertAdjacentHTML('beforeend','<button class="th-fab" id="th-fab" aria-label="Changer de thème" title="Thème"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 2a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>');
+$('#th-fab').onclick=e=>{
+  e.stopPropagation(); const old=$('.th-menu'); if(old){ old.remove(); return; }
+  const cur=store.get('theme','original');
+  document.body.insertAdjacentHTML('beforeend',`<div class="th-menu" role="menu">${THEMES.map(([k,l])=>`<button role="menuitemradio" aria-checked="${k===cur}" data-t="${k}">${k===cur?'✓ ':''}${l}</button>`).join('')}</div>`);
+  document.querySelectorAll('.th-menu button').forEach(b=>b.onclick=()=>{ store.set('theme',b.dataset.t); applyTheme(); $('.th-menu').remove(); const ts_=$('#theme-sel'); if(ts_) ts_.value=b.dataset.t; });
+};
+addEventListener('click',e=>{ const m=$('.th-menu'); if(m && !m.contains(e.target)) m.remove(); });
 $('#c-go').onclick=drawExam;
 $('#search').oninput=renderList;
 integrateCustom();
