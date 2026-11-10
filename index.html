@@ -512,9 +512,9 @@ html.th-grad.fc-on #card{background:radial-gradient(1200px 700px at 20% 0%,#2a1f
 @keyframes fcZoom{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
 .fc-exit{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:14px;z-index:301;display:none}
 html.fc-on .fc-exit{display:inline-flex}
-.th-fab{position:fixed;right:21px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:50;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
+.th-fab{position:fixed;right:21px;bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:50;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
 html.th-grad .th-fab{background:#1a1640;border-color:rgba(143,124,255,.45);color:#fff}
-.th-menu{position:fixed;right:21px;bottom:calc(118px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.22);min-width:170px}
+.th-menu{position:fixed;right:21px;bottom:calc(112px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.22);min-width:170px}
 .th-menu button{all:unset;cursor:pointer;padding:9px 12px;border-radius:7px;color:var(--ink);font-size:14px}
 .th-menu button:hover,.th-menu button[aria-checked=true]{background:var(--line)}
 html.th-grad .th-menu{background:#15122f;border-color:rgba(143,124,255,.35)}
@@ -564,7 +564,7 @@ html.th-grad #tabs .tg{background:rgba(255,255,255,.06)}html.th-grad #tabs .tg a
 .fopt[open] summary{border-color:var(--accent)}
 .fopt-in{position:absolute;z-index:40;top:calc(100% + 6px);left:0;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(0,0,0,.18);min-width:240px}
 #cd.far{padding:8px 14px}#cd.far b{font-size:20px}
-.gs-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:44px;height:44px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:20px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.gs-fab{position:fixed;right:21px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;width:38px;height:38px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .gs-fab:hover{transform:scale(1.06)}
 /* barre d'outils de l'accueil : trois contrôles identiques */
 #v-home header.top .row{gap:8px;align-items:center}
@@ -3876,7 +3876,7 @@ $('#cp-btn').onclick=e=>{ e.stopPropagation(); const p=$('#cp-panel'); p.hidden=
 addEventListener('click',e=>{ if(!e.target.closest('.cpick')) cpClose(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#cp-panel').hidden) cpClose(); });
 new MutationObserver(cpLabel).observe($('#cp-panel'),{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
-document.body.insertAdjacentHTML('beforeend','<button class="gs-fab" id="gs-fab" aria-label="Chercher dans tous les cours (Ctrl+K)" title="Chercher partout (Ctrl+K)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg></button>'); $('#gs-fab').onclick=openSearch;
+document.body.insertAdjacentHTML('beforeend','<button class="gs-fab" id="gs-fab" aria-label="Chercher dans tous les cours (Ctrl+K)" title="Chercher partout (Ctrl+K)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/></svg></button>'); $('#gs-fab').onclick=openSearch;
 $('#f-sec').onchange=buildDeck; $('#f-mode').onchange=buildDeck; $('#f-ans').onchange=()=>{ store.set('ans',$('#f-ans').value); renderCard(); }; $('#f-ans').value=store.get('ans','flip'); $('#n-search').oninput=renderNotes; $('#reshuffle').onclick=buildDeck;
 
 /* mode focus des cartes flash */
