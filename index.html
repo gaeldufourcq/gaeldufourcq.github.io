@@ -1287,7 +1287,6 @@ function renderHome(){
       <div class="grpbar">${groupPicker()}<span class="grpnote">${esc(groupNote(false))}</span></div>
       <div class="hlist">${(showAll?rowList:rowList.slice(0,3)).join('')||'<div class="empty">Aucun contrôle prévu.</div>'}</div>
       ${rowList.length>3?`<button class="linkbtn small" id="all-exams">${showAll?'Afficher seulement les 3 prochains':`Voir les ${rowList.length} contrôles`}</button>`:''}
-      <div class="stats">${express}</div>
       <h2 class="hh">Mes matières</h2>
       <div class="hgrid">${tiles}</div>`,
     revision:`<div class="stats"><div class="act3">${express.replace('stat wide xgo','stat xgo')}
